@@ -1,0 +1,41 @@
+const pl = {
+  common: {
+    home: "Strona główna",
+    products: "Produkty",
+    transactions: "Transakcje",
+    payments: "Płatności",
+    inbox: "Wiadomości",
+    wishlist: "Ulubione",
+    profile: "Profil",
+    admin: "Administrator",
+    loading: "Ładowanie...",
+    noData: "Brak danych",
+    search: "Szukaj",
+    save: "Zapisz",
+    cancel: "Anuluj",
+  },
+  status: {
+    pending: "Oczekujące",
+    confirmed: "Potwierdzone",
+    paid: "Opłacone",
+    completed: "Zakończone",
+    cancelled: "Anulowane",
+    failed: "Nieudane",
+    refunded: "Zwrócone",
+    reviewed: "Sprawdzone",
+    resolved: "Rozwiązane",
+    rejected: "Odrzucone",
+  },
+  condition: {
+    likeNew: "Jak nowy",
+    veryGood: "Bardzo dobry",
+    good: "Dobry",
+    fair: "Dostateczny",
+  },
+  paymentMethod: {
+    cashOnDelivery: "Płatność przy odbiorze",
+    bankTransfer: "Przelew bankowy",
+    onlineDemo: "Demo online",
+  },
+};
+export default pl;

@@ -1,0 +1,41 @@
+const en = {
+  common: {
+    home: "Home",
+    products: "Products",
+    transactions: "Transactions",
+    payments: "Payments",
+    inbox: "Inbox",
+    wishlist: "Wishlist",
+    profile: "Profile",
+    admin: "Admin",
+    loading: "Loading...",
+    noData: "No data found",
+    search: "Search",
+    save: "Save",
+    cancel: "Cancel",
+  },
+  status: {
+    pending: "Pending",
+    confirmed: "Confirmed",
+    paid: "Paid",
+    completed: "Completed",
+    cancelled: "Cancelled",
+    failed: "Failed",
+    refunded: "Refunded",
+    reviewed: "Reviewed",
+    resolved: "Resolved",
+    rejected: "Rejected",
+  },
+  condition: {
+    likeNew: "Like New",
+    veryGood: "Very Good",
+    good: "Good",
+    fair: "Fair",
+  },
+  paymentMethod: {
+    cashOnDelivery: "Cash On Delivery",
+    bankTransfer: "Bank Transfer",
+    onlineDemo: "Online Demo",
+  },
+};
+export default en;
