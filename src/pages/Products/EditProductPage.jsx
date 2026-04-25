@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import ProductForm from "../../components/product/ProductForm";
@@ -8,6 +9,7 @@ import Loader from "../../components/common/Loader";
 import useToast from "../../hooks/useToast";
 
 function EditProductPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -33,12 +35,18 @@ function EditProductPage() {
   const handleUpdate = async (payload) => {
     try {
       await productApi.update(id, payload);
-      toast.success("Updated", "Listing updated successfully.");
+
+      toast.success(
+        t("products.updated", "Updated"),
+        t("products.updatedSuccess", "Listing updated successfully."),
+      );
+
       navigate("/my-products");
     } catch (error) {
       toast.error(
-        "Update failed",
-        error.response?.data?.message || "Could not update listing.",
+        t("products.updateFailed", "Update failed"),
+        error.response?.data?.message ||
+          t("products.couldNotUpdate", "Could not update listing."),
       );
     }
   };
@@ -49,14 +57,17 @@ function EditProductPage() {
         <section className="page-shell">
           <div className="container">
             {loading ? (
-              <Loader text="Loading product..." />
+              <Loader text={t("products.loadingOne", "Loading product...")} />
             ) : (
               <>
-                <h1 className="page-title">Edit Listing</h1>
+                <h1 className="page-title">
+                  {t("products.editTitle", "Edit Listing")}
+                </h1>
+
                 <ProductForm
                   initialValues={product}
                   onSubmit={handleUpdate}
-                  submitText="Update Product"
+                  submitText={t("products.updateButton", "Update Product")}
                 />
               </>
             )}

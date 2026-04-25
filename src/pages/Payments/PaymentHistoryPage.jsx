@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import paymentApi from "../../api/paymentApi";
@@ -8,7 +9,9 @@ import useToast from "../../hooks/useToast";
 import { formatCurrency } from "../../utils/formatCurrency";
 
 function PaymentHistoryPage() {
+  const { t } = useTranslation();
   const toast = useToast();
+
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,29 +21,37 @@ function PaymentHistoryPage() {
         const response = await paymentApi.getMine();
         setPayments(response.data || []);
       } catch (error) {
-        toast.error("Load failed", "Could not load payment history.");
+        toast.error(
+          t("toast.loadFailed", "Load failed"),
+          t("payment.historyLoadFailed", "Could not load payment history."),
+        );
       } finally {
         setLoading(false);
       }
     };
 
     loadPayments();
-  }, []);
+  }, [t, toast]);
 
   return (
     <ProtectedRoute>
       <MainLayout>
         {loading ? (
-          <Loader text="Loading payments..." />
+          <Loader text={t("payment.loadingPayments", "Loading payments...")} />
         ) : (
           <section className="page-shell">
             <div className="container">
-              <h1 className="page-title">Payment History</h1>
+              <h1 className="page-title">
+                {t("payment.historyTitle", "Payment History")}
+              </h1>
 
               {payments.length === 0 ? (
                 <EmptyState
-                  title="No payments yet"
-                  description="There are no payment records available for your account."
+                  title={t("payment.noPayments", "No payments yet")}
+                  description={t(
+                    "payment.noPaymentsDescription",
+                    "There are no payment records available for your account.",
+                  )}
                 />
               ) : (
                 <div className="payment-history-list">
@@ -49,11 +60,19 @@ function PaymentHistoryPage() {
                       <div className="payment-history-top">
                         <div>
                           <h3>{payment.productTitle}</h3>
-                          <p className="muted">Buyer: {payment.buyerName}</p>
-                          <p className="muted">Seller: {payment.sellerName}</p>
+                          <p className="muted">
+                            {t("payment.buyer", "Buyer")}: {payment.buyerName}
+                          </p>
+                          <p className="muted">
+                            {t("payment.seller", "Seller")}:{" "}
+                            {payment.sellerName}
+                          </p>
                         </div>
+
                         <div
-                          className={`payment-status-badge payment-status-${String(payment.paymentStatus).toLowerCase()}`}
+                          className={`payment-status-badge payment-status-${String(
+                            payment.paymentStatus,
+                          ).toLowerCase()}`}
                         >
                           {payment.paymentStatus}
                         </div>
@@ -61,23 +80,34 @@ function PaymentHistoryPage() {
 
                       <div className="payment-history-grid">
                         <div>
-                          <span className="muted">Transaction</span>
+                          <span className="muted">
+                            {t("payment.transaction", "Transaction")}
+                          </span>
                           <strong>#{payment.transactionId}</strong>
                         </div>
+
                         <div>
-                          <span className="muted">Method</span>
+                          <span className="muted">
+                            {t("payment.method", "Method")}
+                          </span>
                           <strong>{payment.paymentMethod}</strong>
                         </div>
+
                         <div>
-                          <span className="muted">Amount</span>
+                          <span className="muted">
+                            {t("payment.amount", "Amount")}
+                          </span>
                           <strong>{formatCurrency(payment.amount)}</strong>
                         </div>
+
                         <div>
-                          <span className="muted">Paid At</span>
+                          <span className="muted">
+                            {t("payment.paidAt", "Paid At")}
+                          </span>
                           <strong>
                             {payment.paidAt
                               ? new Date(payment.paidAt).toLocaleString()
-                              : "Not paid yet"}
+                              : t("payment.notPaidYet", "Not paid yet")}
                           </strong>
                         </div>
                       </div>

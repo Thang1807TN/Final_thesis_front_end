@@ -1,11 +1,13 @@
 const pl = {
   common: {
     home: "Strona główna",
+    subtitle: "Rynek rzeczy używanych",
     products: "Produkty",
     transactions: "Transakcje",
     payments: "Płatności",
     inbox: "Wiadomości",
     wishlist: "Ulubione",
+    myListings: "Moje ogłoszenia",
     profile: "Profil",
     admin: "Administrator",
     loading: "Ładowanie...",
@@ -13,7 +15,87 @@ const pl = {
     search: "Szukaj",
     save: "Zapisz",
     cancel: "Anuluj",
+    latest: "Najnowsze",
+    hi: "Cześć",
+    user: "Użytkownik",
+    logout: "Wyloguj",
+    login: "Zaloguj",
+    register: "Zarejestruj",
+    creating: "Tworzenie...",
+    opening: "Otwieranie...",
+    tryAgain: "Spróbuj ponownie.",
+    available: "Dostępne",
+    sold: "Sprzedane",
+    edit: "Edytuj",
+    delete: "Usuń",
   },
+
+  products: {
+    browseTitle: "Przeglądaj produkty",
+    browseSubtitle:
+      "Szukaj i odkrywaj dostępne ogłoszenia produktów używanych.",
+    loading: "Ładowanie produktów...",
+    loadingDetails: "Ładowanie szczegółów produktu...",
+    noProducts: "Brak produktów",
+    tryFilters: "Spróbuj zmienić słowa kluczowe lub filtry.",
+    notFound: "Nie znaleziono produktu",
+    notFoundDescription: "Nie można załadować wybranego produktu.",
+    sortBy: "Sortuj według",
+    priceLowHigh: "Cena: od najniższej",
+    priceHighLow: "Cena: od najwyższej",
+    availableFirst: "Najpierw dostępne",
+    soldFirst: "Najpierw sprzedane",
+    condition: "Stan",
+    location: "Lokalizacja",
+    seller: "Sprzedawca",
+    rating: "Ocena",
+    buyNow: "Kup teraz",
+    messageSeller: "Napisz do sprzedawcy",
+    saveProduct: "Zapisz",
+    savedProduct: "Zapisano",
+    viewSellerProfile: "Zobacz profil sprzedawcy",
+    created: "Utworzono",
+    createdSuccess: "Ogłoszenie zostało pomyślnie utworzone.",
+    createFailed: "Błąd tworzenia",
+    couldNotCreate: "Nie udało się utworzyć ogłoszenia.",
+    createTitle: "Dodaj ogłoszenie",
+    createSubtitle: "Dodaj nowy używany produkt do marketplace.",
+    createButton: "Utwórz produkt",
+    updated: "Zaktualizowano",
+    updatedSuccess: "Ogłoszenie zostało zaktualizowane.",
+    updateFailed: "Błąd aktualizacji",
+    couldNotUpdate: "Nie udało się zaktualizować ogłoszenia.",
+    editTitle: "Edytuj ogłoszenie",
+    updateButton: "Zaktualizuj produkt",
+    loadingOne: "Ładowanie produktu...",
+    myListingsTitle: "Moje ogłoszenia",
+    myListingsSubtitle: "Zarządzaj swoimi opublikowanymi produktami.",
+    myListingsLoading: "Ładowanie Twoich ogłoszeń...",
+
+    myListingsLoadFailed: "Nie udało się załadować Twoich ogłoszeń.",
+
+    noListings: "Brak ogłoszeń",
+    noListingsDescription:
+      "Dodaj swoje pierwsze ogłoszenie, aby zacząć sprzedawać.",
+
+    deleteConfirm: "Usunąć to ogłoszenie?",
+    deleted: "Usunięto",
+    deletedSuccess: "Ogłoszenie zostało usunięte.",
+    deleteFailed: "Błąd usuwania",
+    couldNotDelete: "Nie udało się usunąć ogłoszenia.",
+  },
+
+  toast: {
+    transactionCreated: "Transakcja utworzona",
+    continueToPayment: "Możesz teraz przejść do płatności.",
+    transactionCreateFailed: "Nie udało się utworzyć transakcji",
+    conversationReady: "Rozmowa gotowa",
+    chatWithSeller: "Możesz teraz rozmawiać ze sprzedawcą.",
+    chatStartFailed: "Nie udało się rozpocząć czatu",
+    favoriteFailed: "Błąd zapisu",
+    wishlistUpdateFailed: "Nie udało się zaktualizować ulubionych.",
+  },
+
   status: {
     pending: "Oczekujące",
     confirmed: "Potwierdzone",
@@ -26,16 +108,120 @@ const pl = {
     resolved: "Rozwiązane",
     rejected: "Odrzucone",
   },
+
   condition: {
     likeNew: "Jak nowy",
     veryGood: "Bardzo dobry",
     good: "Dobry",
     fair: "Dostateczny",
   },
+  transactions: {
+    title: "Transakcje",
+    subtitle: "Monitoruj swoje transakcje i ich statusy.",
+    loading: "Ładowanie transakcji...",
+    emptyTitle: "Brak transakcji",
+    emptyDescription: "Nie masz jeszcze żadnych zapisanych transakcji.",
+    loadFailed: "Nie udało się załadować transakcji.",
+    completed: "Zakończono",
+    markedCompleted: "Transakcja została oznaczona jako zakończona.",
+    completeFailed: "Nie udało się zakończyć",
+    couldNotComplete: "Nie można zakończyć transakcji.",
+    loadingOne: "Ładowanie transakcji...",
+    notFound: "Nie znaleziono transakcji",
+    notFoundDescription: "Nie można załadować wybranej transakcji.",
+
+    detailTitle: "Szczegóły transakcji",
+    detailSubtitle: "Szczegółowe informacje o przebiegu zamówienia.",
+    backToTransactions: "Powrót do transakcji",
+
+    productInformation: "Informacje o produkcie",
+    orderInformation: "Informacje o zamówieniu",
+
+    product: "Produkt",
+    seller: "Sprzedawca",
+    buyer: "Kupujący",
+
+    paymentStatus: "Status płatności",
+    totalAmount: "Kwota całkowita",
+    createdAt: "Data utworzenia",
+
+    goToPayment: "Przejdź do płatności",
+    markCompleted: "Oznacz jako zakończone",
+
+    reviewSeller: "Oceń sprzedawcę",
+    hideReviewForm: "Ukryj formularz opinii",
+
+    viewProduct: "Zobacz produkt",
+
+    reviewed: "Oceniono",
+    reviewSubmitted: "Opinia o sprzedawcy została wysłana.",
+  },
+  notFound: {
+    description: "Strona, której szukasz, nie istnieje.",
+    backHome: "Powrót do strony głównej",
+  },
+  checkout: {
+    title: "Finalizacja zakupu",
+    subtitle: "Sprawdź transakcję przed przejściem do płatności.",
+    noTransaction: "Nie wybrano transakcji",
+    noTransactionDescription:
+      "Wróć do strony produktu i najpierw utwórz transakcję.",
+    continueToPayment: "Przejdź do płatności",
+  },
+  payment: {
+    title: "Płatność",
+    subtitle: "Potwierdź i zakończ płatność za tę transakcję.",
+    secureCheckout: "Bezpieczna płatność",
+
+    noTransaction: "Nie wybrano transakcji",
+    noTransactionDescription: "Wybierz transakcję przed dokonaniem płatności.",
+
+    paymentMethod: "Metoda płatności",
+    couponCode: "Kod rabatowy",
+    enterCouponCode: "Wprowadź kod rabatowy",
+
+    validate: "Sprawdź",
+    checking: "Sprawdzanie...",
+
+    valid: "Poprawny",
+    discount: "Zniżka",
+    final: "Kwota końcowa",
+
+    checkoutSummary: "Podsumowanie",
+    product: "Produkt",
+    originalTotal: "Kwota początkowa",
+    finalTotal: "Kwota końcowa",
+
+    confirmPayment: "Potwierdź płatność",
+    processing: "Przetwarzanie...",
+
+    validationFailed: "Błąd weryfikacji",
+    couldNotValidateCoupon: "Nie udało się sprawdzić kuponu.",
+
+    paymentCreated: "Płatność utworzona",
+    paymentCompleted: "Płatność zakończona pomyślnie.",
+
+    paymentFailed: "Błąd płatności",
+    couldNotProcessPayment: "Nie udało się przetworzyć płatności.",
+    historyTitle: "Historia płatności",
+    historyLoadFailed: "Nie udało się załadować historii płatności.",
+    loadingPayments: "Ładowanie płatności...",
+    noPayments: "Brak płatności",
+    noPaymentsDescription: "Brak zapisanych płatności dla Twojego konta.",
+    buyer: "Kupujący",
+    seller: "Sprzedawca",
+    transaction: "Transakcja",
+    method: "Metoda",
+    amount: "Kwota",
+    paidAt: "Zapłacono",
+    notPaidYet: "Jeszcze nie zapłacono",
+  },
+
   paymentMethod: {
     cashOnDelivery: "Płatność przy odbiorze",
     bankTransfer: "Przelew bankowy",
     onlineDemo: "Demo online",
   },
 };
+
 export default pl;

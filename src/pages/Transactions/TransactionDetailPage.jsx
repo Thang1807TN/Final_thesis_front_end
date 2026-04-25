@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import transactionApi from "../../api/transactionApi";
@@ -9,8 +10,10 @@ import OrderTimeline from "../../components/transaction/OrderTimeline";
 import ReviewSellerForm from "../../components/transaction/ReviewSellerForm";
 import useToast from "../../hooks/useToast";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { formatDate } from "../../utils/formatDate";
 
 function TransactionDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const toast = useToast();
 
@@ -37,11 +40,16 @@ function TransactionDetailPage() {
     try {
       const response = await transactionApi.complete(id);
       setTransaction(response.data);
-      toast.success("Completed", "Transaction marked as completed.");
+
+      toast.success(
+        t("transactions.completed", "Completed"),
+        t("transactions.markedCompleted", "Transaction marked as completed."),
+      );
     } catch (error) {
       toast.error(
-        "Complete failed",
-        error.response?.data?.message || "Could not complete transaction.",
+        t("transactions.completeFailed", "Complete failed"),
+        error.response?.data?.message ||
+          t("transactions.couldNotComplete", "Could not complete transaction."),
       );
     }
   };
@@ -52,71 +60,117 @@ function TransactionDetailPage() {
         <section className="page-shell">
           <div className="container">
             {loading ? (
-              <Loader text="Loading transaction..." />
+              <Loader
+                text={t("transactions.loadingOne", "Loading transaction...")}
+              />
             ) : !transaction ? (
               <EmptyState
-                title="Transaction not found"
-                description="The requested transaction could not be loaded."
+                title={t("transactions.notFound", "Transaction not found")}
+                description={t(
+                  "transactions.notFoundDescription",
+                  "The requested transaction could not be loaded.",
+                )}
               />
             ) : (
-              <div className="transaction-detail-layout">
+              <div className="transaction-detail-shell">
                 <div className="card transaction-detail-card">
-                  <div className="page-title-row">
+                  <div className="transaction-detail-header">
                     <div>
-                      <h1 className="page-title">Transaction Details</h1>
+                      <span
+                        className={`transaction-status-badge ${String(
+                          transaction.status || "pending",
+                        ).toLowerCase()}`}
+                      >
+                        {transaction.status}
+                      </span>
+
+                      <h1 className="page-title">
+                        {t("transactions.detailTitle", "Transaction Details")}
+                      </h1>
+
                       <p className="page-subtitle">
-                        Detailed information about this order flow.
+                        {t(
+                          "transactions.detailSubtitle",
+                          "Detailed information about this order flow.",
+                        )}
                       </p>
                     </div>
 
-                    <span
-                      className={`transaction-status-badge transaction-status-${String(transaction.status).toLowerCase()}`}
-                    >
-                      {transaction.status}
-                    </span>
+                    <Link to="/transactions" className="btn btn-outline">
+                      {t(
+                        "transactions.backToTransactions",
+                        "Back to Transactions",
+                      )}
+                    </Link>
                   </div>
 
                   <div className="transaction-detail-grid">
-                    <div>
-                      <span className="muted">Product</span>
-                      <strong>{transaction.productTitle}</strong>
+                    <div className="transaction-info-panel">
+                      <h3>
+                        {t(
+                          "transactions.productInformation",
+                          "Product Information",
+                        )}
+                      </h3>
+
+                      <div className="transaction-info-row">
+                        <span>{t("transactions.product", "Product")}</span>
+                        <strong>{transaction.productTitle}</strong>
+                      </div>
+
+                      <div className="transaction-info-row">
+                        <span>{t("transactions.seller", "Seller")}</span>
+                        <strong>{transaction.sellerName}</strong>
+                      </div>
+
+                      <div className="transaction-info-row">
+                        <span>
+                          {t("transactions.paymentStatus", "Payment Status")}
+                        </span>
+                        <strong>{transaction.paymentStatus || "N/A"}</strong>
+                      </div>
                     </div>
-                    <div>
-                      <span className="muted">Buyer</span>
-                      <strong>{transaction.buyerName}</strong>
-                    </div>
-                    <div>
-                      <span className="muted">Seller</span>
-                      <strong>{transaction.sellerName}</strong>
-                    </div>
-                    <div>
-                      <span className="muted">Total Amount</span>
-                      <strong>{formatCurrency(transaction.totalAmount)}</strong>
-                    </div>
-                    <div>
-                      <span className="muted">Payment Status</span>
-                      <strong>{transaction.paymentStatus || "N/A"}</strong>
-                    </div>
-                    <div>
-                      <span className="muted">Created At</span>
-                      <strong>
-                        {new Date(transaction.createdAt).toLocaleString()}
-                      </strong>
+
+                    <div className="transaction-info-panel">
+                      <h3>
+                        {t(
+                          "transactions.orderInformation",
+                          "Order Information",
+                        )}
+                      </h3>
+
+                      <div className="transaction-info-row">
+                        <span>{t("transactions.buyer", "Buyer")}</span>
+                        <strong>{transaction.buyerName}</strong>
+                      </div>
+
+                      <div className="transaction-info-row">
+                        <span>
+                          {t("transactions.totalAmount", "Total Amount")}
+                        </span>
+                        <strong className="transaction-detail-price">
+                          {formatCurrency(
+                            transaction.totalAmount ?? transaction.amount ?? 0,
+                          )}
+                        </strong>
+                      </div>
+
+                      <div className="transaction-info-row">
+                        <span>{t("transactions.createdAt", "Created At")}</span>
+                        <strong>{formatDate(transaction.createdAt)}</strong>
+                      </div>
                     </div>
                   </div>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "12px",
-                      flexWrap: "wrap",
-                      marginTop: "18px",
-                    }}
-                  >
+                  <div className="transaction-detail-actions">
                     {!transaction.isPaid && (
-                      <a href="/payments" className="btn btn-outline">
-                        Go to Payment
-                      </a>
+                      <Link
+                        to="/payments"
+                        state={{ transaction }}
+                        className="btn btn-primary"
+                      >
+                        {t("transactions.goToPayment", "Go to Payment")}
+                      </Link>
                     )}
 
                     {transaction.status === "Paid" && (
@@ -124,7 +178,7 @@ function TransactionDetailPage() {
                         className="btn btn-primary"
                         onClick={handleComplete}
                       >
-                        Mark Completed
+                        {t("transactions.markCompleted", "Mark Completed")}
                       </button>
                     )}
 
@@ -133,22 +187,41 @@ function TransactionDetailPage() {
                         className="btn btn-outline"
                         onClick={() => setShowReviewForm((prev) => !prev)}
                       >
-                        {showReviewForm ? "Hide Review Form" : "Review Seller"}
+                        {showReviewForm
+                          ? t("transactions.hideReviewForm", "Hide Review Form")
+                          : t("transactions.reviewSeller", "Review Seller")}
                       </button>
                     )}
+
+                    <Link
+                      to={`/products/${transaction.productId}`}
+                      className="btn btn-outline"
+                    >
+                      {t("transactions.viewProduct", "View Product")}
+                    </Link>
                   </div>
                 </div>
 
-                <OrderTimeline transactionId={transaction.id} />
+                <div className="transaction-detail-timeline">
+                  <OrderTimeline transactionId={transaction.id} />
+                </div>
 
                 {transaction.status === "Completed" && showReviewForm && (
-                  <ReviewSellerForm
-                    transactionId={transaction.id}
-                    onSuccess={() => {
-                      setShowReviewForm(false);
-                      toast.success("Reviewed", "Seller review submitted.");
-                    }}
-                  />
+                  <div className="card transaction-detail-review-card">
+                    <ReviewSellerForm
+                      transactionId={transaction.id}
+                      onSuccess={() => {
+                        setShowReviewForm(false);
+                        toast.success(
+                          t("transactions.reviewed", "Reviewed"),
+                          t(
+                            "transactions.reviewSubmitted",
+                            "Seller review submitted.",
+                          ),
+                        );
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             )}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import productApi from "../../api/productApi";
@@ -9,7 +10,9 @@ import useToast from "../../hooks/useToast";
 import { formatCurrency } from "../../utils/formatCurrency";
 
 function MyProductsPage() {
+  const { t } = useTranslation();
   const toast = useToast();
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,8 +20,11 @@ function MyProductsPage() {
     try {
       const response = await productApi.getMyProducts();
       setProducts(response.data || []);
-    } catch {
-      setProducts([]);
+    } catch (error) {
+      toast.error(
+        t("toast.loadFailed", "Load failed"),
+        t("products.myListingsLoadFailed", "Could not load your listings."),
+      );
     } finally {
       setLoading(false);
     }
@@ -29,14 +35,25 @@ function MyProductsPage() {
   }, []);
 
   const handleDelete = async (id) => {
+    const confirmed = window.confirm(
+      t("products.deleteConfirm", "Delete this listing?"),
+    );
+
+    if (!confirmed) return;
+
     try {
       await productApi.remove(id);
+
       setProducts((prev) => prev.filter((item) => item.id !== id));
-      toast.success("Deleted", "Listing deleted successfully.");
+
+      toast.success(
+        t("products.deleted", "Deleted"),
+        t("products.deletedSuccess", "Listing deleted successfully."),
+      );
     } catch (error) {
       toast.error(
-        "Delete failed",
-        error.response?.data?.message || "Could not delete listing.",
+        t("products.deleteFailed", "Delete failed"),
+        t("products.couldNotDelete", "Could not delete listing."),
       );
     }
   };
@@ -46,53 +63,101 @@ function MyProductsPage() {
       <MainLayout>
         <section className="page-shell">
           <div className="container">
-            <div className="page-title-row">
+            <div className="my-listings-header">
               <div>
-                <h1 className="page-title">My Listings</h1>
+                <h1 className="page-title">
+                  {t("products.myListingsTitle", "My Listings")}
+                </h1>
+
                 <p className="page-subtitle">
-                  Manage the products you have published.
+                  {t(
+                    "products.myListingsSubtitle",
+                    "Manage the products you have published.",
+                  )}
                 </p>
               </div>
+
               <Link to="/products/create" className="btn btn-primary">
-                Create Listing
+                {t("products.createTitle", "Create Listing")}
               </Link>
             </div>
 
             {loading ? (
-              <Loader text="Loading your listings..." />
+              <Loader
+                text={t(
+                  "products.myListingsLoading",
+                  "Loading your listings...",
+                )}
+              />
             ) : products.length === 0 ? (
               <EmptyState
-                title="No listings yet"
-                description="You have not created any product listings."
+                title={t("products.noListings", "No listings yet")}
+                description={t(
+                  "products.noListingsDescription",
+                  "Create your first product listing to start selling.",
+                )}
               />
             ) : (
-              <div className="my-product-list">
-                {products.map((item) => (
-                  <div key={item.id} className="card my-product-card">
-                    <div>
-                      <h3>{item.title}</h3>
-                      <p className="muted">{item.location}</p>
-                      <strong>{formatCurrency(item.price)}</strong>
-                    </div>
+              <div className="my-listings-grid">
+                {products.map((product) => {
+                  const imageUrl =
+                    product.imageUrl ||
+                    product.imageUrls?.[0] ||
+                    "https://via.placeholder.com/600x400?text=Product";
 
-                    <div
-                      style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
-                    >
-                      <Link
-                        className="btn btn-outline"
-                        to={`/products/edit/${item.id}`}
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        className="btn btn-outline btn-danger-outline"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        Delete
-                      </button>
+                  return (
+                    <div key={product.id} className="card my-listing-card">
+                      <div className="my-listing-image-wrap">
+                        <img
+                          src={imageUrl}
+                          alt={product.title}
+                          className="my-listing-image"
+                        />
+
+                        <span
+                          className={`my-listing-status ${
+                            product.isAvailable ? "available" : "sold"
+                          }`}
+                        >
+                          {product.isAvailable
+                            ? t("common.available", "Available")
+                            : t("common.sold", "Sold")}
+                        </span>
+                      </div>
+
+                      <div className="my-listing-body">
+                        <h3>{product.title}</h3>
+                        <p className="my-listing-desc">{product.description}</p>
+
+                        <div className="my-listing-meta">
+                          <span>{product.condition}</span>
+                          <span>{product.location}</span>
+                        </div>
+
+                        <strong className="my-listing-price">
+                          {formatCurrency(product.price)}
+                        </strong>
+
+                        <div className="my-listing-actions">
+                          <Link
+                            to={`/products/edit/${product.id}`}
+                            className="btn btn-outline"
+                          >
+                            {t("common.edit", "Edit")}
+                          </Link>
+
+                          <button
+                            type="button"
+                            className="btn btn-outline btn-danger-outline"
+                            onClick={() => handleDelete(product.id)}
+                          >
+                            {t("common.delete", "Delete")}
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import productApi from "../../api/productApi";
 import transactionApi from "../../api/transactionApi";
@@ -13,6 +14,7 @@ import useToast from "../../hooks/useToast";
 import { formatCurrency } from "../../utils/formatCurrency";
 
 function ProductDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -52,18 +54,22 @@ function ProductDetailPage() {
     };
 
     load();
-  }, [id]);
+  }, [id, currentUser?.id]);
 
   const handleBuyNow = async () => {
     try {
       setBuying(true);
       const response = await transactionApi.create({ productId: product.id });
-      toast.success("Transaction created", "You can now continue to payment.");
+      toast.success(
+        t("toast.transactionCreated", "Transaction created"),
+        t("toast.continueToPayment", "You can now continue to payment."),
+      );
       navigate("/payments", { state: { transaction: response.data } });
     } catch (error) {
       toast.error(
-        "Could not create transaction",
-        error.response?.data?.message || "Please try again.",
+        t("toast.transactionCreateFailed", "Could not create transaction"),
+        error.response?.data?.message ||
+          t("common.tryAgain", "Please try again."),
       );
     } finally {
       setBuying(false);
@@ -76,12 +82,16 @@ function ProductDetailPage() {
       const response = await chatApi.createConversation({
         productId: product.id,
       });
-      toast.success("Conversation ready", "You can now chat with the seller.");
+      toast.success(
+        t("toast.conversationReady", "Conversation ready"),
+        t("toast.chatWithSeller", "You can now chat with the seller."),
+      );
       navigate("/inbox", { state: { conversationId: response.data.id } });
     } catch (error) {
       toast.error(
-        "Could not start chat",
-        error.response?.data?.message || "Please try again.",
+        t("toast.chatStartFailed", "Could not start chat"),
+        error.response?.data?.message ||
+          t("common.tryAgain", "Please try again."),
       );
     } finally {
       setMessaging(false);
@@ -93,14 +103,19 @@ function ProductDetailPage() {
       const response = await favoriteApi.toggle(product.id);
       setFavorite(response.data?.isFavorite || false);
     } catch {
-      toast.error("Favorite failed", "Could not update wishlist.");
+      toast.error(
+        t("toast.favoriteFailed", "Favorite failed"),
+        t("toast.wishlistUpdateFailed", "Could not update wishlist."),
+      );
     }
   };
 
   if (loading) {
     return (
       <MainLayout>
-        <Loader text="Loading product details..." />
+        <Loader
+          text={t("products.loadingDetails", "Loading product details...")}
+        />
       </MainLayout>
     );
   }
@@ -111,8 +126,11 @@ function ProductDetailPage() {
         <section className="page-shell">
           <div className="container">
             <EmptyState
-              title="Product not found"
-              description="The requested product could not be loaded."
+              title={t("products.notFound", "Product not found")}
+              description={t(
+                "products.notFoundDescription",
+                "The requested product could not be loaded.",
+              )}
             />
           </div>
         </section>
@@ -133,19 +151,22 @@ function ProductDetailPage() {
 
             <div className="product-detail-meta">
               <div>
-                <span>Condition</span>
+                <span>{t("products.condition", "Condition")}</span>
                 <strong>{product.condition}</strong>
               </div>
+
               <div>
-                <span>Location</span>
+                <span>{t("products.location", "Location")}</span>
                 <strong>{product.location}</strong>
               </div>
+
               <div>
-                <span>Seller</span>
+                <span>{t("products.seller", "Seller")}</span>
                 <strong>{product.sellerName}</strong>
               </div>
+
               <div>
-                <span>Rating</span>
+                <span>{t("products.rating", "Rating")}</span>
                 <strong>{summary?.averageRating || 0} / 5</strong>
               </div>
             </div>
@@ -158,20 +179,28 @@ function ProductDetailPage() {
                     onClick={handleBuyNow}
                     disabled={buying}
                   >
-                    {buying ? "Creating..." : "Buy Now"}
+                    {buying
+                      ? t("common.creating", "Creating...")
+                      : t("products.buyNow", "Buy Now")}
                   </button>
+
                   <button
                     className="btn btn-outline"
                     onClick={handleMessageSeller}
                     disabled={messaging}
                   >
-                    {messaging ? "Opening..." : "Message Seller"}
+                    {messaging
+                      ? t("common.opening", "Opening...")
+                      : t("products.messageSeller", "Message Seller")}
                   </button>
+
                   <button
                     className="btn btn-outline"
                     onClick={handleToggleFavorite}
                   >
-                    {favorite ? "Saved" : "Save"}
+                    {favorite
+                      ? t("products.savedProduct", "Saved")
+                      : t("products.saveProduct", "Save")}
                   </button>
                 </>
               )}
@@ -180,7 +209,7 @@ function ProductDetailPage() {
                 to={`/seller/${product.sellerId}`}
                 className="btn btn-outline"
               >
-                View Seller Profile
+                {t("products.viewSellerProfile", "View Seller Profile")}
               </Link>
             </div>
           </div>

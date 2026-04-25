@@ -31,7 +31,8 @@ function ProductForm({
       try {
         const response = await categoryApi.getAll();
         setCategories(response.data || []);
-      } catch {
+      } catch (error) {
+        console.error("Failed to load categories:", error);
         setCategories([]);
       }
     };
@@ -66,27 +67,44 @@ function ProductForm({
     }));
   };
 
+  const normalizeUploadedUrls = (result) => {
+    if (Array.isArray(result)) return result;
+    if (Array.isArray(result?.urls)) return result.urls;
+    if (Array.isArray(result?.imageUrls)) return result.imageUrls;
+    if (Array.isArray(result?.data)) return result.data;
+    return [];
+  };
+
   const handleUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
     try {
       setUploading(true);
-      const uploadedUrls = await uploadService.uploadImages(files);
+
+      const result = await uploadService.uploadImages(files);
+      const uploadedUrls = normalizeUploadedUrls(result);
+
+      if (!uploadedUrls.length) {
+        toast.error("Upload failed", "No image URLs returned.");
+        return;
+      }
 
       setForm((prev) => ({
         ...prev,
-        imageUrls: [...prev.imageUrls, ...(uploadedUrls || [])],
+        imageUrls: [...prev.imageUrls, ...uploadedUrls],
       }));
 
       toast.success("Uploaded", "Images uploaded successfully.");
     } catch (error) {
+      console.error("Upload failed:", error);
       toast.error(
         "Upload failed",
         error.response?.data?.message || "Could not upload images.",
       );
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -100,26 +118,55 @@ function ProductForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!form.categoryId) {
+      toast.error("Missing category", "Please select a category.");
+      return;
+    }
+
+    if (!form.price || Number(form.price) <= 0) {
+      toast.error("Invalid price", "Price must be greater than 0.");
+      return;
+    }
+
+    // 🔥 FIX ENUM
+    const conditionMap = {
+      LikeNew: 1,
+      VeryGood: 2,
+      Good: 3,
+      Fair: 4,
+    };
+
+    const payload = {
+      title: form.title.trim(),
+      description: form.description.trim(),
+      price: Number(form.price),
+      location: form.location.trim(),
+      condition: conditionMap[form.condition], // <-- FIX QUAN TRỌNG
+      categoryId: Number(form.categoryId),
+      imageUrls: form.imageUrls,
+    };
+
+    // chỉ gửi khi edit
+    if (initialValues) {
+      payload.isAvailable = form.isAvailable;
+    }
+
     try {
       setSubmitting(true);
-
-      await onSubmit({
-        title: form.title,
-        description: form.description,
-        price: Number(form.price),
-        location: form.location,
-        condition: form.condition,
-        categoryId: Number(form.categoryId),
-        imageUrls: form.imageUrls,
-        isAvailable: form.isAvailable,
-      });
+      await onSubmit(payload);
+    } catch (error) {
+      console.error("Create failed:", error);
+      toast.error(
+        "Create failed",
+        error.response?.data?.message || "Could not create listing.",
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <form className="card product-form-card" onSubmit={handleSubmit}>
+    <form className=" product-form-card" onSubmit={handleSubmit}>
       <div className="form-grid">
         <div className="form-group">
           <label>Title</label>
@@ -138,6 +185,7 @@ function ProductForm({
             className="input"
             name="price"
             type="number"
+            min="1"
             value={form.price}
             onChange={handleChange}
             required
@@ -203,7 +251,13 @@ function ProductForm({
 
       <div className="form-group">
         <label>Upload Images</label>
-        <input type="file" multiple onChange={handleUpload} />
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleUpload}
+          disabled={uploading}
+        />
         {uploading && <p className="muted">Uploading...</p>}
       </div>
 
@@ -238,7 +292,11 @@ function ProductForm({
         </div>
       )}
 
-      <button className="btn btn-primary" disabled={submitting}>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        disabled={submitting || uploading}
+      >
         {submitting ? "Saving..." : submitText}
       </button>
     </form>

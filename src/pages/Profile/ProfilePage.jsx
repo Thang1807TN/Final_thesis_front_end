@@ -26,6 +26,8 @@ function ProfilePage() {
           fullName: response.data.fullName || "",
           email: response.data.email || "",
         });
+      } catch (error) {
+        toast.error("Load failed", "Could not load profile.");
       } finally {
         setLoading(false);
       }
@@ -33,6 +35,15 @@ function ProfilePage() {
 
     loadProfile();
   }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,42 +75,39 @@ function ProfilePage() {
               <div className="profile-page-grid">
                 <ProfileCard user={profile} />
 
-                <div className="card profile-edit-card">
+                <div className="card profile-form-card">
                   <h1 className="page-title">My Profile</h1>
                   <p className="page-subtitle">
                     Update your account information.
                   </p>
 
-                  <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                      <label>Full Name</label>
+                  <form className="profile-form" onSubmit={handleSubmit}>
+                    <div className="input-group">
+                      <label className="input-label">Full Name</label>
                       <input
-                        className="input"
+                        className="input-field"
+                        name="fullName"
                         value={form.fullName}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            fullName: e.target.value,
-                          }))
-                        }
+                        onChange={handleChange}
                       />
                     </div>
 
-                    <div className="form-group">
-                      <label>Email</label>
+                    <div className="input-group">
+                      <label className="input-label">Email</label>
                       <input
-                        className="input"
+                        className="input-field"
+                        name="email"
+                        type="email"
                         value={form.email}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                          }))
-                        }
+                        onChange={handleChange}
                       />
                     </div>
 
-                    <button className="btn btn-primary" disabled={saving}>
+                    <button
+                      className="btn btn-primary"
+                      type="submit"
+                      disabled={saving}
+                    >
                       {saving ? "Saving..." : "Save Changes"}
                     </button>
                   </form>

@@ -1,11 +1,13 @@
 const en = {
   common: {
     home: "Home",
+    subtitle: "Second-hand marketplace",
     products: "Products",
     transactions: "Transactions",
     payments: "Payments",
     inbox: "Inbox",
     wishlist: "Wishlist",
+    myListings: "My Listings",
     profile: "Profile",
     admin: "Admin",
     loading: "Loading...",
@@ -13,7 +15,87 @@ const en = {
     search: "Search",
     save: "Save",
     cancel: "Cancel",
+    latest: "Latest",
+    hi: "Hi",
+    user: "User",
+    logout: "Logout",
+    login: "Login",
+    register: "Register",
+    creating: "Creating...",
+    opening: "Opening...",
+    tryAgain: "Please try again.",
+    available: "Available",
+    sold: "Sold",
+    edit: "Edit",
+    delete: "Delete",
   },
+
+  products: {
+    browseTitle: "Browse Products",
+    browseSubtitle:
+      "Search and explore available second-hand product listings.",
+    loading: "Loading products...",
+    loadingDetails: "Loading product details...",
+    noProducts: "No products found",
+    tryFilters: "Try changing your keyword or filter options.",
+    notFound: "Product not found",
+    notFoundDescription: "The requested product could not be loaded.",
+    sortBy: "Sort By",
+    priceLowHigh: "Price: Low to High",
+    priceHighLow: "Price: High to Low",
+    availableFirst: "Available First",
+    soldFirst: "Sold First",
+    condition: "Condition",
+    location: "Location",
+    seller: "Seller",
+    rating: "Rating",
+    buyNow: "Buy Now",
+    messageSeller: "Message Seller",
+    saveProduct: "Save",
+    savedProduct: "Saved",
+    viewSellerProfile: "View Seller Profile",
+    created: "Created",
+    createdSuccess: "Listing created successfully.",
+    createFailed: "Create failed",
+    couldNotCreate: "Could not create listing.",
+    createTitle: "Create Listing",
+    createSubtitle: "Add a new second-hand product to the marketplace.",
+    createButton: "Create Product",
+    updated: "Updated",
+    updatedSuccess: "Listing updated successfully.",
+    updateFailed: "Update failed",
+    couldNotUpdate: "Could not update listing.",
+    editTitle: "Edit Listing",
+    updateButton: "Update Product",
+    loadingOne: "Loading product...",
+    myListingsTitle: "My Listings",
+    myListingsSubtitle: "Manage the products you have published.",
+    myListingsLoading: "Loading your listings...",
+
+    myListingsLoadFailed: "Could not load your listings.",
+
+    noListings: "No listings yet",
+    noListingsDescription:
+      "Create your first product listing to start selling.",
+
+    deleteConfirm: "Delete this listing?",
+    deleted: "Deleted",
+    deletedSuccess: "Listing deleted successfully.",
+    deleteFailed: "Delete failed",
+    couldNotDelete: "Could not delete listing.",
+  },
+
+  toast: {
+    transactionCreated: "Transaction created",
+    continueToPayment: "You can now continue to payment.",
+    transactionCreateFailed: "Could not create transaction",
+    conversationReady: "Conversation ready",
+    chatWithSeller: "You can now chat with the seller.",
+    chatStartFailed: "Could not start chat",
+    favoriteFailed: "Favorite failed",
+    wishlistUpdateFailed: "Could not update wishlist.",
+  },
+
   status: {
     pending: "Pending",
     confirmed: "Confirmed",
@@ -26,11 +108,116 @@ const en = {
     resolved: "Resolved",
     rejected: "Rejected",
   },
+
   condition: {
     likeNew: "Like New",
     veryGood: "Very Good",
     good: "Good",
     fair: "Fair",
+  },
+
+  transactions: {
+    title: "Transactions",
+    subtitle: "Monitor your current transaction records and statuses.",
+    loading: "Loading transactions...",
+    emptyTitle: "No transactions yet",
+    emptyDescription: "You do not have any recorded transactions.",
+    loadFailed: "Could not load transactions.",
+    completed: "Completed",
+    markedCompleted: "Transaction marked as completed.",
+    completeFailed: "Complete failed",
+    couldNotComplete: "Could not complete transaction.",
+    loadingOne: "Loading transaction...",
+    notFound: "Transaction not found",
+    notFoundDescription: "The requested transaction could not be loaded.",
+
+    detailTitle: "Transaction Details",
+    detailSubtitle: "Detailed information about this order flow.",
+    backToTransactions: "Back to Transactions",
+
+    productInformation: "Product Information",
+    orderInformation: "Order Information",
+
+    product: "Product",
+    seller: "Seller",
+    buyer: "Buyer",
+
+    paymentStatus: "Payment Status",
+    totalAmount: "Total Amount",
+    createdAt: "Created At",
+
+    goToPayment: "Go to Payment",
+    markCompleted: "Mark Completed",
+
+    reviewSeller: "Review Seller",
+    hideReviewForm: "Hide Review Form",
+
+    viewProduct: "View Product",
+
+    reviewed: "Reviewed",
+    reviewSubmitted: "Seller review submitted.",
+  },
+  notFound: {
+    description: "The page you are looking for does not exist.",
+    backHome: "Back Home",
+  },
+  checkout: {
+    title: "Checkout",
+    subtitle: "Review your transaction before proceeding to payment.",
+    noTransaction: "No transaction selected",
+    noTransactionDescription:
+      "Go back to a product page and create a transaction first.",
+    continueToPayment: "Continue to Payment",
+  },
+  payment: {
+    title: "Payment",
+    subtitle: "Confirm and complete your payment for this transaction.",
+    secureCheckout: "Secure checkout",
+
+    noTransaction: "No transaction selected",
+    noTransactionDescription:
+      "Please choose a transaction before making a payment.",
+
+    paymentMethod: "Payment Method",
+    couponCode: "Coupon Code",
+    enterCouponCode: "Enter coupon code",
+
+    validate: "Validate",
+    checking: "Checking...",
+
+    valid: "Valid",
+    discount: "Discount",
+    final: "Final",
+
+    checkoutSummary: "Checkout Summary",
+    product: "Product",
+    originalTotal: "Original Total",
+    finalTotal: "Final Total",
+
+    confirmPayment: "Confirm Payment",
+    processing: "Processing...",
+
+    validationFailed: "Validation failed",
+    couldNotValidateCoupon: "Could not validate coupon.",
+
+    paymentCreated: "Payment created",
+    paymentCompleted: "Payment flow completed successfully.",
+
+    paymentFailed: "Payment failed",
+    couldNotProcessPayment: "Could not process payment.",
+    historyTitle: "Payment History",
+    historyLoadFailed: "Could not load payment history.",
+    loadingPayments: "Loading payments...",
+    noPayments: "No payments yet",
+    noPaymentsDescription:
+      "There are no payment records available for your account.",
+    buyer: "Buyer",
+    seller: "Seller",
+    transaction: "Transaction",
+    method: "Method",
+    amount: "Amount",
+    paidAt: "Paid At",
+    notPaidYet: "Not paid yet",
   },
   paymentMethod: {
     cashOnDelivery: "Cash On Delivery",
@@ -38,4 +225,5 @@ const en = {
     onlineDemo: "Online Demo",
   },
 };
+
 export default en;

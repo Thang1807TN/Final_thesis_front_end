@@ -1,23 +1,26 @@
-import { useEffect, useState } from 'react';
-import MainLayout from '../../layouts/MainLayout';
-import productApi from '../../api/productApi';
-import categoryApi from '../../api/categoryApi';
-import Loader from '../../components/common/Loader';
-import EmptyState from '../../components/common/EmptyState';
-import ProductGrid from '../../components/product/ProductGrid';
-import ProductSearchBar from '../../components/product/ProductSearchBar';
-import ProductFilter from '../../components/product/ProductFilter';
-import Pagination from '../../components/common/Pagination';
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import MainLayout from "../../layouts/MainLayout";
+import productApi from "../../api/productApi";
+import categoryApi from "../../api/categoryApi";
+import Loader from "../../components/common/Loader";
+import EmptyState from "../../components/common/EmptyState";
+import ProductGrid from "../../components/product/ProductGrid";
+import ProductSearchBar from "../../components/product/ProductSearchBar";
+import ProductFilter from "../../components/product/ProductFilter";
+import Pagination from "../../components/common/Pagination";
 
 function ProductListPage() {
+  const { t } = useTranslation();
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [keyword, setKeyword] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [condition, setCondition] = useState('');
-  const [sortBy, setSortBy] = useState('latest');
+  const [keyword, setKeyword] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [condition, setCondition] = useState("");
+  const [sortBy, setSortBy] = useState("latest");
   const [pageNumber, setPageNumber] = useState(1);
 
   const [paging, setPaging] = useState({
@@ -32,6 +35,7 @@ function ProductListPage() {
 
   const loadProducts = async () => {
     setLoading(true);
+
     try {
       const response = await productApi.getAll({
         keyword,
@@ -43,10 +47,18 @@ function ProductListPage() {
       });
 
       const data = response.data;
+
       setProducts(data.items || []);
       setPaging({
         totalPages: data.totalPages || 1,
         totalCount: data.totalCount || 0,
+      });
+    } catch (error) {
+      console.error("Failed to load products:", error);
+      setProducts([]);
+      setPaging({
+        totalPages: 1,
+        totalCount: 0,
       });
     } finally {
       setLoading(false);
@@ -59,21 +71,30 @@ function ProductListPage() {
 
   useEffect(() => {
     loadProducts();
-  }, [pageNumber, sortBy]);
+  }, [pageNumber, sortBy, categoryId, condition]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setPageNumber(1);
-    loadProducts();
+
+    if (pageNumber === 1) {
+      loadProducts();
+    }
   };
 
   return (
     <MainLayout>
       <section className="page-shell">
         <div className="container">
-          <h1 className="page-title">Browse Products</h1>
+          <h1 className="page-title">
+            {t("products.browseTitle", "Browse Products")}
+          </h1>
+
           <p className="page-subtitle">
-            Search and explore available second-hand product listings.
+            {t(
+              "products.browseSubtitle",
+              "Search and explore available second-hand product listings.",
+            )}
           </p>
 
           <ProductSearchBar
@@ -86,13 +107,23 @@ function ProductListPage() {
             category={categoryId}
             condition={condition}
             categories={categories}
-            onCategoryChange={(e) => setCategoryId(e.target.value)}
-            onConditionChange={(e) => setCondition(e.target.value)}
+            onCategoryChange={(e) => {
+              setCategoryId(e.target.value);
+              setPageNumber(1);
+            }}
+            onConditionChange={(e) => {
+              setCondition(e.target.value);
+              setPageNumber(1);
+            }}
           />
 
-          <div className="card payment-filter-bar" style={{ marginTop: '14px' }}>
+          <div
+            className="card payment-filter-bar"
+            style={{ marginTop: "14px" }}
+          >
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Sort By</label>
+              <label>{t("products.sortBy", "Sort By")}</label>
+
               <select
                 className="input"
                 value={sortBy}
@@ -101,25 +132,37 @@ function ProductListPage() {
                   setPageNumber(1);
                 }}
               >
-                <option value="latest">Latest</option>
-                <option value="price-low-high">Price: Low to High</option>
-                <option value="price-high-low">Price: High to Low</option>
-                <option value="available">Available First</option>
-                <option value="sold">Sold First</option>
+                <option value="latest">{t("common.latest", "Latest")}</option>
+                <option value="price-low-high">
+                  {t("products.priceLowHigh", "Price: Low to High")}
+                </option>
+                <option value="price-high-low">
+                  {t("products.priceHighLow", "Price: High to Low")}
+                </option>
+                <option value="available">
+                  {t("products.availableFirst", "Available First")}
+                </option>
+                <option value="sold">
+                  {t("products.soldFirst", "Sold First")}
+                </option>
               </select>
             </div>
           </div>
 
           {loading ? (
-            <Loader text="Loading products..." />
+            <Loader text={t("products.loading", "Loading products...")} />
           ) : products.length === 0 ? (
             <EmptyState
-              title="No products found"
-              description="Try changing your keyword or filter options."
+              title={t("products.noProducts", "No products found")}
+              description={t(
+                "products.tryFilters",
+                "Try changing your keyword or filter options.",
+              )}
             />
           ) : (
             <>
               <ProductGrid products={products} />
+
               <Pagination
                 currentPage={pageNumber}
                 totalPages={paging.totalPages}
