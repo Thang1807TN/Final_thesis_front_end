@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import chatApi from "../../api/chatApi";
@@ -9,6 +10,7 @@ import ChatBox from "../../components/chat/ChatBox";
 import useToast from "../../hooks/useToast";
 
 function InboxPage() {
+  const { t } = useTranslation();
   const toast = useToast();
   const location = useLocation();
 
@@ -37,6 +39,7 @@ function InboxPage() {
         const matched = conversationList.find(
           (item) => item.id === preferredConversationId,
         );
+
         if (matched) {
           setSelectedConversation(matched);
           return;
@@ -45,13 +48,18 @@ function InboxPage() {
 
       setSelectedConversation((prev) => {
         if (!prev) return conversationList[0];
+
         const stillExists = conversationList.find(
           (item) => item.id === prev.id,
         );
+
         return stillExists || conversationList[0];
       });
     } catch (error) {
-      toast.error("Load failed", "Could not load conversations.");
+      toast.error(
+        t("toast.loadFailed", "Load failed"),
+        t("chat.loadFailed", "Could not load conversations."),
+      );
     } finally {
       setLoading(false);
     }
@@ -65,11 +73,13 @@ function InboxPage() {
     try {
       const response = await chatApi.getMyConversations();
       const conversationList = response.data || [];
+
       setConversations(conversationList);
 
       const matched = conversationList.find(
         (item) => item.id === conversationId,
       );
+
       if (matched) {
         setSelectedConversation(matched);
       }
@@ -82,19 +92,26 @@ function InboxPage() {
     <ProtectedRoute>
       <MainLayout>
         {loading ? (
-          <Loader text="Loading inbox..." />
+          <Loader text={t("chat.loadingInbox", "Loading inbox...")} />
         ) : (
           <section className="page-shell">
             <div className="container">
-              <h1 className="page-title">Inbox</h1>
+              <h1 className="page-title">{t("chat.title", "Inbox")}</h1>
+
               <p className="page-subtitle">
-                Communicate with buyers and sellers about product listings.
+                {t(
+                  "chat.subtitle",
+                  "Communicate with buyers and sellers about product listings.",
+                )}
               </p>
 
               {conversations.length === 0 ? (
                 <EmptyState
-                  title="No conversations yet"
-                  description="Start by messaging a seller from a product detail page."
+                  title={t("chat.noConversations", "No conversations yet")}
+                  description={t(
+                    "chat.noConversationsDescription",
+                    "Start by messaging a seller from a product detail page.",
+                  )}
                 />
               ) : (
                 <div className="chat-layout">
@@ -102,6 +119,7 @@ function InboxPage() {
                     {conversations.map((conversation) => (
                       <button
                         key={conversation.id}
+                        type="button"
                         className={`chat-sidebar-item ${
                           selectedConversation?.id === conversation.id
                             ? "active"
@@ -112,8 +130,10 @@ function InboxPage() {
                         <div className="chat-sidebar-title">
                           {conversation.productTitle}
                         </div>
+
                         <div className="chat-sidebar-preview">
-                          {conversation.lastMessagePreview || "No messages yet"}
+                          {conversation.lastMessagePreview ||
+                            t("chat.noMessagesYet", "No messages yet")}
                         </div>
 
                         {conversation.unreadCount > 0 && (

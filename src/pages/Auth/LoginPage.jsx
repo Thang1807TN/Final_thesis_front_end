@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
 import useAuth from "../../hooks/useAuth";
 
 function LoginPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -14,6 +16,7 @@ function LoginPage() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -34,7 +37,8 @@ function LoginPage() {
       navigate("/");
     } catch (error) {
       setErrorMessage(
-        error.response?.data?.message || "Login failed. Please try again.",
+        error.response?.data?.message ||
+          t("auth.loginFailed", "Login failed. Please try again."),
       );
     } finally {
       setSubmitting(false);
@@ -43,44 +47,75 @@ function LoginPage() {
 
   return (
     <AuthLayout>
-      <div className="auth-card">
-        <h1 className="auth-title">Welcome back</h1>
-        <p className="auth-subtitle">
-          Login to manage your listings, inbox, payments, and transactions.
-        </p>
+      <div className="auth-page-card">
+        <div className="auth-card-header">
+          <span className="auth-badge">
+            {t("auth.secureLogin", "Secure Login")}
+          </span>
 
-        <form onSubmit={handleSubmit}>
+          <h1 className="auth-title">
+            {t("auth.welcomeBack", "Welcome back")}
+          </h1>
+
+          <p className="auth-subtitle">
+            {t(
+              "auth.loginSubtitle",
+              "Login to manage your listings, inbox, payments, and transactions.",
+            )}
+          </p>
+        </div>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          {/* EMAIL */}
           <Input
-            label="Email"
+            label={t("auth.email", "Email")}
             name="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder={t("auth.enterEmail", "Enter your email")}
             value={form.email}
             onChange={handleChange}
             required
           />
 
-          <Input
-            label="Password"
-            name="password"
-            type="password"
-            placeholder="Enter your password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          {/* PASSWORD WITH TOGGLE */}
+          <div className="password-field">
+            <label className="input-label">
+              {t("auth.password", "Password")}
+            </label>
+
+            <div className="password-input-wrap">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder={t("auth.enterPassword", "Enter your password")}
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
+          </div>
 
           {errorMessage && <p className="form-error">{errorMessage}</p>}
 
-          <Button type="submit" fullWidth>
-            {submitting ? "Logging in..." : "Login"}
+          <Button type="submit" fullWidth disabled={submitting}>
+            {submitting
+              ? t("auth.loggingIn", "Logging in...")
+              : t("common.login", "Login")}
           </Button>
         </form>
 
-        <p style={{ marginTop: "18px" }} className="muted">
-          Don’t have an account?{" "}
+        <p className="auth-switch-text">
+          {t("auth.noAccount", "Don’t have an account?")}{" "}
           <Link className="link" to="/register">
-            Create one
+            {t("auth.createOne", "Create one")}
           </Link>
         </p>
       </div>

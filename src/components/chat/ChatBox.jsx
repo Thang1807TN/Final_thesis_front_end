@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import chatApi from "../../api/chatApi";
 import useToast from "../../hooks/useToast";
 
 function ChatBox({ conversation, onConversationUpdated }) {
+  const { t } = useTranslation();
   const toast = useToast();
 
   const [messages, setMessages] = useState([]);
@@ -28,7 +30,10 @@ function ChatBox({ conversation, onConversationUpdated }) {
       }
     } catch (error) {
       if (!silent) {
-        toast.error("Load failed", "Could not load messages.");
+        toast.error(
+          t("toast.loadFailed", "Load failed"),
+          t("chat.messagesLoadFailed", "Could not load messages."),
+        );
       }
     } finally {
       if (!silent) setLoading(false);
@@ -82,8 +87,9 @@ function ChatBox({ conversation, onConversationUpdated }) {
       await loadMessages(true);
     } catch (error) {
       toast.error(
-        "Send failed",
-        error.response?.data?.message || "Could not send message.",
+        t("chat.sendFailed", "Send failed"),
+        error.response?.data?.message ||
+          t("chat.couldNotSendMessage", "Could not send message."),
       );
     } finally {
       setSending(false);
@@ -99,9 +105,16 @@ function ChatBox({ conversation, onConversationUpdated }) {
 
       <div className="chat-messages">
         {loading ? (
-          <p className="muted">Loading messages...</p>
+          <p className="muted">
+            {t("chat.loadingMessages", "Loading messages...")}
+          </p>
         ) : messages.length === 0 ? (
-          <p className="muted">No messages yet. Start the conversation.</p>
+          <p className="muted">
+            {t(
+              "chat.noMessagesDescription",
+              "No messages yet. Start the conversation.",
+            )}
+          </p>
         ) : (
           messages.map((message) => {
             const mine = message.senderId === currentUser?.id;
@@ -113,6 +126,7 @@ function ChatBox({ conversation, onConversationUpdated }) {
               >
                 <div className={`chat-bubble ${mine ? "mine" : ""}`}>
                   <strong>{message.senderName}</strong>
+
                   {message.content && <p>{message.content}</p>}
 
                   {message.attachmentUrl && (
@@ -122,7 +136,9 @@ function ChatBox({ conversation, onConversationUpdated }) {
                       rel="noreferrer"
                       className="chat-attachment-link"
                     >
-                      📎 {message.attachmentName || "Attachment"}
+                      📎{" "}
+                      {message.attachmentName ||
+                        t("chat.attachment", "Attachment")}
                     </a>
                   )}
 
@@ -132,6 +148,7 @@ function ChatBox({ conversation, onConversationUpdated }) {
             );
           })
         )}
+
         <div ref={bottomRef} />
       </div>
 
@@ -143,19 +160,19 @@ function ChatBox({ conversation, onConversationUpdated }) {
 
         <input
           className="input"
-          placeholder="Type your message..."
+          placeholder={t("chat.typeMessage", "Type your message...")}
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
 
-        <button className="btn btn-primary" disabled={sending}>
-          {sending ? "Sending..." : "Send"}
+        <button type="submit" className="btn btn-primary" disabled={sending}>
+          {sending ? t("chat.sending", "Sending...") : t("chat.send", "Send")}
         </button>
       </form>
 
       {attachmentName && (
         <div className="chat-attachment-preview">
-          Selected: {attachmentName}
+          {t("chat.selected", "Selected")}: {attachmentName}
         </div>
       )}
     </div>

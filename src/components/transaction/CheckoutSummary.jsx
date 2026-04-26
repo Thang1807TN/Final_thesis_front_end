@@ -1,27 +1,38 @@
+import { useTranslation } from "react-i18next";
 import { formatCurrency } from "../../utils/formatCurrency";
 
 function CheckoutSummary({ transaction, finalAmount = null }) {
+  const { t } = useTranslation();
+
   if (!transaction) return null;
 
   return (
     <div className="checkout-summary card">
-      <h3>Checkout Summary</h3>
+      <h3>{t("payment.checkoutSummary", "Checkout Summary")}</h3>
+
       <p>
-        Product: <strong>{transaction.productTitle}</strong>
+        {t("payment.product", "Product")}:{" "}
+        <strong>{transaction.productTitle}</strong>
       </p>
+
       <p>
-        Buyer: <strong>{transaction.buyerName}</strong>
+        {t("payment.buyer", "Buyer")}: <strong>{transaction.buyerName}</strong>
       </p>
+
       <p>
-        Seller: <strong>{transaction.sellerName}</strong>
+        {t("payment.seller", "Seller")}:{" "}
+        <strong>{transaction.sellerName}</strong>
       </p>
+
       <p>
-        Original Total:{" "}
+        {t("payment.originalTotal", "Original Total")}:{" "}
         <strong>{formatCurrency(transaction.totalAmount)}</strong>
       </p>
+
       {finalAmount !== null && (
         <p>
-          Final Total: <strong>{formatCurrency(finalAmount)}</strong>
+          {t("payment.finalTotal", "Final Total")}:{" "}
+          <strong>{formatCurrency(finalAmount)}</strong>
         </p>
       )}
     </div>

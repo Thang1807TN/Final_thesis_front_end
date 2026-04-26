@@ -16,6 +16,21 @@ function MyProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const getConditionText = (condition) => {
+    const map = {
+      1: t("condition.likeNew", "Like New"),
+      2: t("condition.veryGood", "Very Good"),
+      3: t("condition.good", "Good"),
+      4: t("condition.fair", "Fair"),
+      LikeNew: t("condition.likeNew", "Like New"),
+      VeryGood: t("condition.veryGood", "Very Good"),
+      Good: t("condition.good", "Good"),
+      Fair: t("condition.fair", "Fair"),
+    };
+
+    return map[condition] || condition || t("common.unknown", "Unknown");
+  };
+
   const loadProducts = async () => {
     try {
       const response = await productApi.getMyProducts();
@@ -127,10 +142,11 @@ function MyProductsPage() {
 
                       <div className="my-listing-body">
                         <h3>{product.title}</h3>
+
                         <p className="my-listing-desc">{product.description}</p>
 
                         <div className="my-listing-meta">
-                          <span>{product.condition}</span>
+                          <span>{getConditionText(product.condition)}</span>
                           <span>{product.location}</span>
                         </div>
 

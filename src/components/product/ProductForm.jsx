@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import categoryApi from "../../api/categoryApi";
 import { uploadService } from "../../services/uploadService";
 import useToast from "../../hooks/useToast";
@@ -14,11 +15,8 @@ const defaultValues = {
   isAvailable: true,
 };
 
-function ProductForm({
-  initialValues = null,
-  onSubmit,
-  submitText = "Save Product",
-}) {
+function ProductForm({ initialValues = null, onSubmit, submitText }) {
+  const { t } = useTranslation();
   const toast = useToast();
 
   const [form, setForm] = useState(defaultValues);
@@ -31,8 +29,7 @@ function ProductForm({
       try {
         const response = await categoryApi.getAll();
         setCategories(response.data || []);
-      } catch (error) {
-        console.error("Failed to load categories:", error);
+      } catch {
         setCategories([]);
       }
     };
@@ -42,28 +39,44 @@ function ProductForm({
 
   useEffect(() => {
     if (initialValues) {
+      const conditionMap = {
+        1: "LikeNew",
+        2: "VeryGood",
+        3: "Good",
+        4: "Fair",
+        LikeNew: "LikeNew",
+        VeryGood: "VeryGood",
+        Good: "Good",
+        Fair: "Fair",
+      };
+
       setForm({
-        title: initialValues.title || "",
-        description: initialValues.description || "",
-        price: initialValues.price || "",
-        location: initialValues.location || "",
-        condition: initialValues.condition || "Good",
+        ...defaultValues,
+        ...initialValues,
+        condition: conditionMap[initialValues.condition] || "Good",
         categoryId: initialValues.categoryId || "",
         imageUrls: initialValues.imageUrls || [],
         isAvailable:
-          typeof initialValues.isAvailable === "boolean"
-            ? initialValues.isAvailable
-            : true,
+          initialValues.isAvailable === undefined
+            ? true
+            : initialValues.isAvailable,
       });
     }
   }, [initialValues]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
 
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
+    }));
+  };
+
+  const handleAvailableChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      isAvailable: e.target.checked,
     }));
   };
 
@@ -86,7 +99,10 @@ function ProductForm({
       const uploadedUrls = normalizeUploadedUrls(result);
 
       if (!uploadedUrls.length) {
-        toast.error("Upload failed", "No image URLs returned.");
+        toast.error(
+          t("products.uploadFailed", "Upload failed"),
+          t("products.noImageReturned", "No image URLs returned."),
+        );
         return;
       }
 
@@ -95,12 +111,15 @@ function ProductForm({
         imageUrls: [...prev.imageUrls, ...uploadedUrls],
       }));
 
-      toast.success("Uploaded", "Images uploaded successfully.");
+      toast.success(
+        t("products.uploaded", "Uploaded"),
+        t("products.uploadSuccess", "Images uploaded successfully."),
+      );
     } catch (error) {
-      console.error("Upload failed:", error);
       toast.error(
-        "Upload failed",
-        error.response?.data?.message || "Could not upload images.",
+        t("products.uploadFailed", "Upload failed"),
+        error.response?.data?.message ||
+          t("products.uploadError", "Could not upload images."),
       );
     } finally {
       setUploading(false);
@@ -119,16 +138,21 @@ function ProductForm({
     e.preventDefault();
 
     if (!form.categoryId) {
-      toast.error("Missing category", "Please select a category.");
+      toast.error(
+        t("products.missingCategory", "Missing category"),
+        t("products.selectCategory", "Please select a category."),
+      );
       return;
     }
 
     if (!form.price || Number(form.price) <= 0) {
-      toast.error("Invalid price", "Price must be greater than 0.");
+      toast.error(
+        t("products.invalidPrice", "Invalid price"),
+        t("products.pricePositive", "Price must be greater than 0."),
+      );
       return;
     }
 
-    // 🔥 FIX ENUM
     const conditionMap = {
       LikeNew: 1,
       VeryGood: 2,
@@ -141,12 +165,11 @@ function ProductForm({
       description: form.description.trim(),
       price: Number(form.price),
       location: form.location.trim(),
-      condition: conditionMap[form.condition], // <-- FIX QUAN TRỌNG
+      condition: conditionMap[form.condition],
       categoryId: Number(form.categoryId),
       imageUrls: form.imageUrls,
     };
 
-    // chỉ gửi khi edit
     if (initialValues) {
       payload.isAvailable = form.isAvailable;
     }
@@ -155,10 +178,10 @@ function ProductForm({
       setSubmitting(true);
       await onSubmit(payload);
     } catch (error) {
-      console.error("Create failed:", error);
       toast.error(
-        "Create failed",
-        error.response?.data?.message || "Could not create listing.",
+        t("products.saveFailed", "Save failed"),
+        error.response?.data?.message ||
+          t("products.saveError", "Could not save listing."),
       );
     } finally {
       setSubmitting(false);
@@ -166,10 +189,10 @@ function ProductForm({
   };
 
   return (
-    <form className=" product-form-card" onSubmit={handleSubmit}>
+    <form className="product-form-card" onSubmit={handleSubmit}>
       <div className="form-grid">
         <div className="form-group">
-          <label>Title</label>
+          <label>{t("products.title", "Title")}</label>
           <input
             className="input"
             name="title"
@@ -180,7 +203,7 @@ function ProductForm({
         </div>
 
         <div className="form-group">
-          <label>Price</label>
+          <label>{t("products.price", "Price")}</label>
           <input
             className="input"
             name="price"
@@ -193,7 +216,7 @@ function ProductForm({
         </div>
 
         <div className="form-group">
-          <label>Location</label>
+          <label>{t("products.location", "Location")}</label>
           <input
             className="input"
             name="location"
@@ -204,7 +227,7 @@ function ProductForm({
         </div>
 
         <div className="form-group">
-          <label>Category</label>
+          <label>{t("products.category", "Category")}</label>
           <select
             className="input"
             name="categoryId"
@@ -212,7 +235,10 @@ function ProductForm({
             onChange={handleChange}
             required
           >
-            <option value="">Select category</option>
+            <option value="">
+              {t("products.selectCategory", "Select category")}
+            </option>
+
             {categories.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.name}
@@ -222,23 +248,27 @@ function ProductForm({
         </div>
 
         <div className="form-group">
-          <label>Condition</label>
+          <label>{t("products.condition", "Condition")}</label>
           <select
             className="input"
             name="condition"
             value={form.condition}
             onChange={handleChange}
           >
-            <option value="LikeNew">Like New</option>
-            <option value="VeryGood">Very Good</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
+            <option value="LikeNew">
+              {t("condition.likeNew", "Like New")}
+            </option>
+            <option value="VeryGood">
+              {t("condition.veryGood", "Very Good")}
+            </option>
+            <option value="Good">{t("condition.good", "Good")}</option>
+            <option value="Fair">{t("condition.fair", "Fair")}</option>
           </select>
         </div>
       </div>
 
       <div className="form-group">
-        <label>Description</label>
+        <label>{t("products.description", "Description")}</label>
         <textarea
           className="input textarea"
           name="description"
@@ -249,29 +279,35 @@ function ProductForm({
         />
       </div>
 
-      <div className="form-group">
-        <label>Upload Images</label>
+      <div className="form-group upload-box">
+        <label>{t("products.uploadImages", "Upload Images")}</label>
+
         <input
+          className="file-input"
           type="file"
           multiple
           accept="image/*"
           onChange={handleUpload}
           disabled={uploading}
         />
-        {uploading && <p className="muted">Uploading...</p>}
+
+        {uploading && (
+          <p className="muted">{t("products.uploading", "Uploading...")}</p>
+        )}
       </div>
 
       {form.imageUrls.length > 0 && (
         <div className="uploaded-image-list">
-          {form.imageUrls.map((imageUrl) => (
-            <div key={imageUrl} className="uploaded-image-item">
-              <img src={imageUrl} alt="Uploaded" />
+          {form.imageUrls.map((url) => (
+            <div key={url} className="uploaded-image-item">
+              <img src={url} alt="Uploaded" />
+
               <button
                 type="button"
-                className="btn btn-outline"
-                onClick={() => removeImage(imageUrl)}
+                className="btn btn-outline btn-danger-outline"
+                onClick={() => removeImage(url)}
               >
-                Remove
+                {t("common.delete", "Delete")}
               </button>
             </div>
           ))}
@@ -279,25 +315,36 @@ function ProductForm({
       )}
 
       {initialValues && (
-        <div className="form-group">
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              name="isAvailable"
-              checked={form.isAvailable}
-              onChange={handleChange}
-            />
-            Available
+        <div className="form-group product-available-row">
+          <label className="toggle-label">
+            <div>
+              <span>{t("products.productStatus", "Product Status")}</span>
+              <small>
+                {form.isAvailable
+                  ? t("common.available", "Available")
+                  : t("products.unavailable", "Sold / Unavailable")}
+              </small>
+            </div>
+
+            <div className="toggle-switch">
+              <input
+                type="checkbox"
+                name="isAvailable"
+                checked={form.isAvailable}
+                onChange={handleAvailableChange}
+              />
+              <span className="toggle-slider"></span>
+            </div>
           </label>
         </div>
       )}
 
       <button
-        type="submit"
         className="btn btn-primary"
+        type="submit"
         disabled={submitting || uploading}
       >
-        {submitting ? "Saving..." : submitText}
+        {submitting ? t("products.saving", "Saving...") : submitText}
       </button>
     </form>
   );

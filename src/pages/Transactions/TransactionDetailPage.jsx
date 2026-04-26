@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
@@ -35,6 +35,40 @@ function TransactionDetailPage() {
 
     loadTransaction();
   }, [id]);
+
+  const paymentSummary = useMemo(() => {
+    const originalAmount = Number(
+      transaction?.totalAmount ?? transaction?.amount ?? 0,
+    );
+
+    const finalAmount = Number(
+      transaction?.paidAmount ?? transaction?.finalAmount ?? originalAmount,
+    );
+
+    const discountAmount = Number(
+      transaction?.discountAmount ?? Math.max(0, originalAmount - finalAmount),
+    );
+
+    const discountPercent =
+      originalAmount > 0 && discountAmount > 0
+        ? Math.round((discountAmount / originalAmount) * 100)
+        : 0;
+
+    const couponCode =
+      transaction?.appliedCouponCode ||
+      transaction?.couponCode ||
+      transaction?.payment?.appliedCouponCode ||
+      null;
+
+    return {
+      originalAmount,
+      finalAmount,
+      discountAmount,
+      discountPercent,
+      couponCode,
+      hasDiscount: discountAmount > 0,
+    };
+  }, [transaction]);
 
   const handleComplete = async () => {
     try {
@@ -76,13 +110,23 @@ function TransactionDetailPage() {
                 <div className="card transaction-detail-card">
                   <div className="transaction-detail-header">
                     <div>
-                      <span
-                        className={`transaction-status-badge ${String(
-                          transaction.status || "pending",
-                        ).toLowerCase()}`}
-                      >
-                        {transaction.status}
-                      </span>
+                      <div className="transaction-detail-badge-row">
+                        <span
+                          className={`transaction-status-badge ${String(
+                            transaction.status || "pending",
+                          ).toLowerCase()}`}
+                        >
+                          {transaction.status}
+                        </span>
+
+                        {paymentSummary.hasDiscount && (
+                          <span className="discount-applied-badge">
+                            {t("payment.discountApplied", "Discount applied")}
+                            {paymentSummary.discountPercent > 0 &&
+                              ` -${paymentSummary.discountPercent}%`}
+                          </span>
+                        )}
+                      </div>
 
                       <h1 className="page-title">
                         {t("transactions.detailTitle", "Transaction Details")}
@@ -129,6 +173,15 @@ function TransactionDetailPage() {
                         </span>
                         <strong>{transaction.paymentStatus || "N/A"}</strong>
                       </div>
+
+                      {paymentSummary.couponCode && (
+                        <div className="transaction-info-row">
+                          <span>{t("coupon.code", "Coupon Code")}</span>
+                          <strong className="coupon-code-pill">
+                            {paymentSummary.couponCode}
+                          </strong>
+                        </div>
+                      )}
                     </div>
 
                     <div className="transaction-info-panel">
@@ -146,12 +199,37 @@ function TransactionDetailPage() {
 
                       <div className="transaction-info-row">
                         <span>
-                          {t("transactions.totalAmount", "Total Amount")}
+                          {t("payment.originalTotal", "Original Amount")}
                         </span>
+                        <strong>
+                          {formatCurrency(paymentSummary.originalAmount)}
+                        </strong>
+                      </div>
+
+                      {paymentSummary.hasDiscount && (
+                        <>
+                          <div className="transaction-info-row discount-row">
+                            <span>{t("payment.discount", "Discount")}</span>
+                            <strong>
+                              -{formatCurrency(paymentSummary.discountAmount)}
+                            </strong>
+                          </div>
+
+                          <div className="transaction-info-row">
+                            <span>
+                              {t("payment.discountPercent", "Discount Percent")}
+                            </span>
+                            <strong className="discount-percent-pill">
+                              -{paymentSummary.discountPercent}%
+                            </strong>
+                          </div>
+                        </>
+                      )}
+
+                      <div className="transaction-info-row">
+                        <span>{t("payment.finalTotal", "Final Amount")}</span>
                         <strong className="transaction-detail-price">
-                          {formatCurrency(
-                            transaction.totalAmount ?? transaction.amount ?? 0,
-                          )}
+                          {formatCurrency(paymentSummary.finalAmount)}
                         </strong>
                       </div>
 

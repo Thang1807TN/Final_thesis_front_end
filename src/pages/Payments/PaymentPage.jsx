@@ -21,26 +21,78 @@ function PaymentPage() {
   const [submitting, setSubmitting] = useState(false);
   const [validating, setValidating] = useState(false);
 
-  const totalAmount = Number(transaction?.totalAmount || 0);
+  const totalAmount = Number(
+    transaction?.totalAmount ?? transaction?.amount ?? transaction?.price ?? 0,
+  );
+
+  const discountAmount = useMemo(() => {
+    if (!couponPreview?.isValid) return 0;
+
+    return Number(
+      couponPreview.discountAmount ??
+        couponPreview.discount ??
+        couponPreview.discountValue ??
+        0,
+    );
+  }, [couponPreview]);
 
   const finalAmount = useMemo(() => {
     if (!couponPreview?.isValid) return totalAmount;
-    return couponPreview.finalAmount ?? totalAmount;
-  }, [couponPreview, totalAmount]);
+
+    const apiFinalAmount =
+      couponPreview.finalAmount ??
+      couponPreview.finalTotal ??
+      couponPreview.totalAfterDiscount ??
+      couponPreview.amountAfterDiscount;
+
+    if (apiFinalAmount !== undefined && apiFinalAmount !== null) {
+      return Number(apiFinalAmount);
+    }
+
+    return Math.max(totalAmount - discountAmount, 0);
+  }, [couponPreview, totalAmount, discountAmount]);
+
+  const handleCouponChange = (e) => {
+    setCouponCode(e.target.value);
+    setCouponPreview(null);
+  };
 
   const handleValidateCoupon = async () => {
-    if (!couponCode.trim()) return;
+    if (!couponCode.trim()) {
+      toast.error(
+        t("payment.missingCoupon", "Missing coupon"),
+        t("payment.enterCouponCode", "Enter coupon code"),
+      );
+      return;
+    }
+
+    if (!transaction?.id) return;
 
     try {
       setValidating(true);
 
       const response = await paymentApi.validateCoupon({
-        transactionId: transaction?.id,
+        transactionId: transaction.id,
         couponCode: couponCode.trim(),
       });
 
       setCouponPreview(response.data);
+
+      if (response.data?.isValid) {
+        toast.success(
+          t("payment.couponApplied", "Coupon applied"),
+          t("payment.discountApplied", "Discount has been applied."),
+        );
+      } else {
+        toast.error(
+          t("payment.invalidCoupon", "Invalid coupon"),
+          response.data?.message ||
+            t("payment.couponNotValid", "Coupon is not valid."),
+        );
+      }
     } catch (error) {
+      setCouponPreview(null);
+
       toast.error(
         t("payment.validationFailed", "Validation failed"),
         error.response?.data?.message ||
@@ -155,7 +207,7 @@ function PaymentPage() {
                         <input
                           className="input payment-input"
                           value={couponCode}
-                          onChange={(e) => setCouponCode(e.target.value)}
+                          onChange={handleCouponChange}
                           placeholder={t(
                             "payment.enterCouponCode",
                             "Enter coupon code",
@@ -192,11 +244,7 @@ function PaymentPage() {
 
                         <p>
                           <span>{t("payment.discount", "Discount")}</span>
-                          <strong>
-                            {couponPreview.discountAmount
-                              ? formatCurrency(couponPreview.discountAmount)
-                              : "0 PLN"}
-                          </strong>
+                          <strong>-{formatCurrency(discountAmount)}</strong>
                         </p>
 
                         <p>
@@ -221,6 +269,13 @@ function PaymentPage() {
                       </span>
                       <strong>{formatCurrency(totalAmount)}</strong>
                     </div>
+
+                    {discountAmount > 0 && (
+                      <div className="summary-row discount">
+                        <span>{t("payment.discount", "Discount")}</span>
+                        <strong>-{formatCurrency(discountAmount)}</strong>
+                      </div>
+                    )}
 
                     <div className="summary-row total">
                       <span>{t("payment.finalTotal", "Final Total")}</span>

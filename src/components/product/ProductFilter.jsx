@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 function ProductFilter({
   category,
   condition,
@@ -5,17 +7,25 @@ function ProductFilter({
   onCategoryChange,
   onConditionChange,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="filter-panel card">
       <div className="filter-row">
         <div className="input-group" style={{ marginBottom: 0 }}>
-          <label className="input-label">Category</label>
+          <label className="input-label">
+            {t("products.category", "Category")}
+          </label>
+
           <select
             className="input-field"
             value={category}
             onChange={onCategoryChange}
           >
-            <option value="">All Categories</option>
+            <option value="">
+              {t("products.allCategories", "All Categories")}
+            </option>
+
             {categories.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.name}
@@ -25,17 +35,30 @@ function ProductFilter({
         </div>
 
         <div className="input-group" style={{ marginBottom: 0 }}>
-          <label className="input-label">Condition</label>
+          <label className="input-label">
+            {t("products.condition", "Condition")}
+          </label>
+
           <select
             className="input-field"
             value={condition}
             onChange={onConditionChange}
           >
-            <option value="">All Conditions</option>
-            <option value="LikeNew">Like New</option>
-            <option value="VeryGood">Very Good</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
+            <option value="">
+              {t("products.allConditions", "All Conditions")}
+            </option>
+
+            <option value="LikeNew">
+              {t("condition.likeNew", "Like New")}
+            </option>
+
+            <option value="VeryGood">
+              {t("condition.veryGood", "Very Good")}
+            </option>
+
+            <option value="Good">{t("condition.good", "Good")}</option>
+
+            <option value="Fair">{t("condition.fair", "Fair")}</option>
           </select>
         </div>
       </div>

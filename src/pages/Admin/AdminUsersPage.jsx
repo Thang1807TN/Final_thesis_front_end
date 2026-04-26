@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import AdminLayout from "../../layouts/AdminLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import userApi from "../../api/userApi";
@@ -6,6 +7,8 @@ import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 
 function AdminUsersPage() {
+  const { t, i18n } = useTranslation();
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,22 +30,27 @@ function AdminUsersPage() {
       <AdminLayout>
         <section className="page-shell">
           <div className="container">
-            <h1 className="page-title">Admin Users</h1>
+            <h1 className="page-title">
+              {t("admin.usersTitle", "Admin Users")}
+            </h1>
 
             {loading ? (
-              <Loader text="Loading users..." />
+              <Loader text={t("admin.loadingUsers", "Loading users...")} />
             ) : users.length === 0 ? (
               <EmptyState
-                title="No users"
-                description="There are no users in the system."
+                title={t("admin.noUsers", "No users")}
+                description={t(
+                  "admin.noUsersDesc",
+                  "There are no users in the system.",
+                )}
               />
             ) : (
               <div className="admin-table">
                 <div className="admin-table-head admin-table-row admin-table-row-4">
-                  <div>Full Name</div>
-                  <div>Email</div>
-                  <div>Role</div>
-                  <div>Created</div>
+                  <div>{t("admin.fullName", "Full Name")}</div>
+                  <div>{t("auth.email", "Email")}</div>
+                  <div>{t("admin.role", "Role")}</div>
+                  <div>{t("admin.created", "Created")}</div>
                 </div>
 
                 {users.map((item) => (
@@ -53,7 +61,13 @@ function AdminUsersPage() {
                     <div>{item.fullName}</div>
                     <div>{item.email}</div>
                     <div>{item.role}</div>
-                    <div>{new Date(item.createdAt).toLocaleDateString()}</div>
+                    <div>
+                      {item.createdAt
+                        ? new Date(item.createdAt).toLocaleDateString(
+                            i18n.language,
+                          )
+                        : "N/A"}
+                    </div>
                   </div>
                 ))}
               </div>

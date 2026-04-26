@@ -34,6 +34,44 @@ function Header() {
     logout();
   };
 
+  const navItems = [
+    {
+      to: "/products",
+      label: t("common.products", "Products"),
+      show: true,
+    },
+    {
+      to: "/transactions",
+      label: t("common.transactions", "Transactions"),
+      show: isAuthenticated,
+    },
+    {
+      to: "/payments/history",
+      label: t("common.payments", "Payments"),
+      show: isAuthenticated,
+    },
+    {
+      to: "/inbox",
+      label: t("common.inbox", "Inbox"),
+      show: isAuthenticated,
+    },
+    {
+      to: "/wishlist",
+      label: t("common.wishlist", "Wishlist"),
+      show: isAuthenticated,
+    },
+    {
+      to: "/my-products",
+      label: t("common.myListings", "My Listings"),
+      show: isAuthenticated,
+    },
+    {
+      to: "/admin",
+      label: t("common.admin", "Admin"),
+      show: isAdmin,
+    },
+  ];
+
   return (
     <header className="site-header">
       <div className="container header-inner">
@@ -50,6 +88,7 @@ function Header() {
           className={`header-menu-btn ${menuOpen ? "active" : ""}`}
           type="button"
           onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label="Toggle menu"
         >
           <span />
           <span />
@@ -58,55 +97,19 @@ function Header() {
 
         <div className={`header-nav-panel ${menuOpen ? "open" : ""}`}>
           <nav className="nav-links">
-            <NavLink to="/products" className="nav-link" onClick={closeMenu}>
-              {t("common.products", "Products")}
-            </NavLink>
-
-            {isAuthenticated && (
-              <>
+            {navItems
+              .filter((item) => item.show)
+              .map((item) => (
                 <NavLink
-                  to="/transactions"
+                  key={item.to}
+                  to={item.to}
                   className="nav-link"
                   onClick={closeMenu}
+                  title={item.label}
                 >
-                  {t("common.transactions", "Transactions")}
+                  {item.label}
                 </NavLink>
-
-                <NavLink
-                  to="/payments/history"
-                  className="nav-link"
-                  onClick={closeMenu}
-                >
-                  {t("common.payments", "Payments")}
-                </NavLink>
-
-                <NavLink to="/inbox" className="nav-link" onClick={closeMenu}>
-                  {t("common.inbox", "Inbox")}
-                </NavLink>
-
-                <NavLink
-                  to="/wishlist"
-                  className="nav-link"
-                  onClick={closeMenu}
-                >
-                  {t("common.wishlist", "Wishlist")}
-                </NavLink>
-
-                <NavLink
-                  to="/my-products"
-                  className="nav-link"
-                  onClick={closeMenu}
-                >
-                  {t("common.myListings", "My Listings")}
-                </NavLink>
-              </>
-            )}
-
-            {isAdmin && (
-              <NavLink to="/admin" className="nav-link" onClick={closeMenu}>
-                {t("common.admin", "Admin")}
-              </NavLink>
-            )}
+              ))}
           </nav>
 
           <div className="header-actions">
@@ -123,10 +126,8 @@ function Header() {
                     {(user?.fullName || "U").charAt(0).toUpperCase()}
                   </span>
 
-                  <div>
-                    <span className="header-user-hi">
-                      {t("common.hi", "Hi")},
-                    </span>
+                  <div className="header-user-info">
+                    <span>{t("common.hi", "Hi")}</span>
                     <strong>
                       {user?.fullName || t("common.user", "User")}
                     </strong>
@@ -146,7 +147,7 @@ function Header() {
                 )}
               </div>
             ) : (
-              <>
+              <div className="header-auth-actions">
                 <Link
                   to="/login"
                   className="btn btn-outline"
@@ -162,7 +163,7 @@ function Header() {
                 >
                   {t("common.register", "Register")}
                 </Link>
-              </>
+              </div>
             )}
           </div>
         </div>

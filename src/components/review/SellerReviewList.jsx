@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import reviewApi from "../../api/reviewApi";
+import { formatDate } from "../../utils/formatDate";
 
 function SellerReviewList({ sellerId }) {
+  const { t } = useTranslation();
+
   const [reviews, setReviews] = useState([]);
   const [sortBy, setSortBy] = useState("latest");
   const [ratingFilter, setRatingFilter] = useState("");
@@ -16,9 +20,7 @@ function SellerReviewList({ sellerId }) {
       }
     };
 
-    if (sellerId) {
-      loadReviews();
-    }
+    if (sellerId) loadReviews();
   }, [sellerId]);
 
   const filteredReviews = useMemo(() => {
@@ -39,25 +41,29 @@ function SellerReviewList({ sellerId }) {
     return result;
   }, [reviews, sortBy, ratingFilter]);
 
+  const renderStars = (rating) => {
+    return "★".repeat(rating) + "☆".repeat(5 - rating);
+  };
+
   if (!sellerId) return null;
 
   return (
     <div className="card seller-review-list-card">
-      <div className="page-title-row">
-        <h3>Seller Reviews</h3>
+      <div className="seller-review-header">
+        <h3>{t("review.title", "Seller Reviews")}</h3>
 
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div className="seller-review-filters">
           <select
             className="input"
             value={ratingFilter}
             onChange={(e) => setRatingFilter(e.target.value)}
           >
-            <option value="">All Ratings</option>
-            <option value="5">5 stars</option>
-            <option value="4">4 stars</option>
-            <option value="3">3 stars</option>
-            <option value="2">2 stars</option>
-            <option value="1">1 star</option>
+            <option value="">{t("review.allRatings", "All Ratings")}</option>
+            <option value="5">5 ★</option>
+            <option value="4">4 ★</option>
+            <option value="3">3 ★</option>
+            <option value="2">2 ★</option>
+            <option value="1">1 ★</option>
           </select>
 
           <select
@@ -65,36 +71,44 @@ function SellerReviewList({ sellerId }) {
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
           >
-            <option value="latest">Latest</option>
-            <option value="rating-high">Highest Rating</option>
-            <option value="rating-low">Lowest Rating</option>
+            <option value="latest">{t("review.latest", "Latest")}</option>
+            <option value="rating-high">
+              {t("review.highest", "Highest Rating")}
+            </option>
+            <option value="rating-low">
+              {t("review.lowest", "Lowest Rating")}
+            </option>
           </select>
         </div>
       </div>
 
       {filteredReviews.length === 0 ? (
-        <p className="muted">No reviews yet.</p>
+        <p className="muted">{t("review.noReviews", "No reviews yet.")}</p>
       ) : (
-        <div className="review-list">
+        <div className="seller-review-list">
           {filteredReviews.map((review) => (
-            <div key={review.id} className="review-item">
-              <div className="review-item-top">
-                <strong>{review.reviewerName}</strong>
-                <span>{review.rating} / 5</span>
+            <div key={review.id} className="seller-review-item">
+              <div className="seller-review-top">
+                <div>
+                  <strong>{review.reviewerName}</strong>
+                  <div className="seller-review-stars">
+                    {renderStars(review.rating)}
+                  </div>
+                </div>
+
+                <span className="seller-review-date">
+                  {formatDate(review.createdAt)}
+                </span>
               </div>
 
-              <p>{review.comment}</p>
+              <p className="seller-review-comment">{review.comment}</p>
 
               {review.sellerReply && (
-                <div className="review-reply-box">
-                  <strong>Seller reply:</strong>
+                <div className="seller-review-reply">
+                  <strong>{t("review.sellerReply", "Seller reply")}</strong>
                   <p>{review.sellerReply}</p>
                 </div>
               )}
-
-              <small className="muted">
-                {new Date(review.createdAt).toLocaleDateString()}
-              </small>
             </div>
           ))}
         </div>

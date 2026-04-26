@@ -28,6 +28,22 @@ const pl = {
     sold: "Sprzedane",
     edit: "Edytuj",
     delete: "Usuń",
+    all: "Wszystkie",
+    action: "Akcja",
+  },
+  reports: {
+    adminTitle: "Zgłoszenia administratora",
+    loading: "Ładowanie zgłoszeń...",
+    emptyTitle: "Nie znaleziono zgłoszeń",
+    emptyDescription: "Brak zgłoszeń w systemie.",
+    reporter: "Zgłaszający",
+    product: "Produkt",
+    reportedUser: "Zgłoszony użytkownik",
+    noDescription: "Brak dodatkowego opisu.",
+    updated: "Zaktualizowano",
+    statusUpdated: "Status zgłoszenia został zaktualizowany.",
+    updateFailed: "Błąd aktualizacji",
+    updateError: "Nie udało się zaktualizować zgłoszenia.",
   },
 
   products: {
@@ -83,8 +99,149 @@ const pl = {
     deletedSuccess: "Ogłoszenie zostało usunięte.",
     deleteFailed: "Błąd usuwania",
     couldNotDelete: "Nie udało się usunąć ogłoszenia.",
+    category: "Kategoria",
+    allCategories: "Wszystkie kategorie",
+    allConditions: "Wszystkie stany",
+    searchPlaceholder: "Szukaj produktów po nazwie lub słowie kluczowym...",
+    unknown: "Nieznany",
+    sellerRating: "Ocena sprzedawcy",
+    title: "Tytuł",
+    price: "Cena",
+
+    description: "Opis",
+    uploadImages: "Dodaj zdjęcia",
+    uploading: "Przesyłanie...",
+    uploaded: "Przesłano",
+    uploadSuccess: "Zdjęcia zostały dodane.",
+    uploadFailed: "Błąd przesyłania",
+    uploadError: "Nie udało się przesłać zdjęć.",
+    noImageReturned: "Brak zwróconych adresów zdjęć.",
+
+    missingCategory: "Brak kategorii",
+    selectCategory: "Wybierz kategorię",
+
+    invalidPrice: "Nieprawidłowa cena",
+    pricePositive: "Cena musi być większa niż 0",
+
+    saving: "Zapisywanie...",
+    saveFailed: "Błąd zapisu",
+    saveError: "Nie udało się zapisać ogłoszenia",
+    sellerMode: "Tryb sprzedawcy",
+    stepDetails: "Szczegóły produktu",
+    stepImages: "Zdjęcia",
+    stepPublish: "Publikacja",
+
+    deleteError: "Nie udało się usunąć produktu.",
+    noProductsAdminDesc: "Brak produktów w systemie.",
+  },
+  wishlist: {
+    title: "Ulubione",
+    subtitle: "Produkty zapisane na później.",
+    loading: "Ładowanie ulubionych...",
+    empty: "Brak zapisanych produktów",
+    emptyDesc: "Zapisz produkty, aby zobaczyć je tutaj.",
+  },
+  admin: {
+    dashboardTitle: "Panel administratora",
+    dashboardSubtitle:
+      "Przegląd użytkowników, ogłoszeń, transakcji, zgłoszeń i przychodów.",
+    users: "Użytkownicy",
+    loadingAnalytics: "Ładowanie analityki...",
+    emailLogsTitle: "Logi e-maili",
+    emailLogsSubtitle:
+      "Symulowane powiadomienia e-mail generowane przez system.",
+    exportCsv: "Eksport CSV",
+    loadingEmailLogs: "Ładowanie logów e-mail...",
+    noEmailLogs: "Brak logów e-mail",
+    noEmailLogsDesc: "Brak zapisanych logów e-mail.",
+    to: "Do",
+    productsTitle: "Produkty (Admin)",
+    usersTitle: "Użytkownicy administratora",
+    loadingUsers: "Ładowanie użytkowników...",
+    noUsers: "Brak użytkowników",
+    noUsersDesc: "Brak użytkowników w systemie.",
+    fullName: "Imię i nazwisko",
+    role: "Rola",
+    created: "Utworzono",
+  },
+  profile: {
+    title: "Mój profil",
+    subtitle: "Zaktualizuj swoje dane konta.",
+
+    fullName: "Imię i nazwisko",
+
+    loading: "Ładowanie profilu...",
+
+    saved: "Zapisano",
+    savedSuccess: "Profil został zaktualizowany.",
+
+    loadFailed: "Błąd ładowania",
+    loadError: "Nie udało się załadować profilu.",
+
+    updateFailed: "Błąd aktualizacji",
+    updateError: "Nie udało się zaktualizować profilu.",
+
+    saving: "Zapisywanie...",
+    saveChanges: "Zapisz zmiany",
+    unknownUser: "Nieznany użytkownik",
+    noEmail: "Brak e-maila",
+    defaultRole: "Użytkownik",
+  },
+  seller: {
+    loadingProfile: "Ładowanie profilu sprzedawcy...",
+    notFound: "Nie znaleziono sprzedawcy",
+    notFoundDescription: "Nie można załadować profilu sprzedawcy.",
+
+    publicProfile: "Profil sprzedawcy",
+    joinedOn: "Dołączył",
+
+    verifiedSeller: "Zweryfikowany sprzedawca",
+
+    totalListings: "Liczba ofert",
+    availableListings: "Dostępne oferty",
+    soldListings: "Sprzedane",
+    averageRating: "Średnia ocena",
+    totalReviews: "Liczba opinii",
+
+    publicListings: "Publiczne oferty",
+    publicListingsSubtitle: "Produkty dostępne od tego sprzedawcy.",
+    noPublicListings: "Brak ofert",
+    noPublicListingsDescription: "Ten sprzedawca nie ma obecnie żadnych ofert.",
+
+    reviews: "Opinie o sprzedawcy",
+    reviewsSubtitle: "Opinie kupujących po zakończonych transakcjach.",
+  },
+  review: {
+    title: "Opinie sprzedawcy",
+    allRatings: "Wszystkie oceny",
+    latest: "Najnowsze",
+    highest: "Najwyższa ocena",
+    lowest: "Najniższa ocena",
+    noReviews: "Brak opinii",
+    sellerReply: "Odpowiedź sprzedawcy",
   },
 
+  coupon: {
+    title: "Zarządzanie kuponami",
+    code: "Kod",
+    discount: "Rabat",
+    usage: "Użycie",
+    usageLimit: "Limit użycia",
+
+    createButton: "Utwórz kupon",
+
+    loading: "Ładowanie kuponów...",
+
+    created: "Utworzono",
+    createdSuccess: "Kupon został utworzony.",
+    createFailed: "Błąd tworzenia",
+    createError: "Nie udało się utworzyć kuponu.",
+
+    deleted: "Usunięto",
+    deletedSuccess: "Kupon został usunięty.",
+    deleteFailed: "Błąd usuwania",
+    deleteError: "Nie udało się usunąć kuponu.",
+  },
   toast: {
     transactionCreated: "Transakcja utworzona",
     continueToPayment: "Możesz teraz przejść do płatności.",
@@ -155,7 +312,184 @@ const pl = {
 
     reviewed: "Oceniono",
     reviewSubmitted: "Opinia o sprzedawcy została wysłana.",
+    orderTimeline: "Historia zamówienia",
+    review: {
+      title: "Oceń sprzedawcę",
+      rating: "Ocena",
+      comment: "Komentarz",
+      commentPlaceholder: "Napisz swoją opinię...",
+
+      submit: "Wyślij opinię",
+      submitting: "Wysyłanie...",
+
+      success: "Oceniono",
+      successDesc: "Opinia o sprzedawcy została wysłana.",
+
+      failed: "Błąd opinii",
+      failedDesc: "Nie udało się wysłać opinii.",
+
+      excellent: "Doskonały",
+      veryGood: "Bardzo dobry",
+      good: "Dobry",
+      fair: "Dostateczny",
+      poor: "Słaby",
+    },
+    payNow: "Zapłać teraz",
+    viewDetails: "Zobacz szczegóły",
+    adminTitle: "Transakcje administratora",
+
+    noTransactions: "Brak transakcji",
+    noTransactionsAdminDesc: "Brak transakcji w systemie.",
+
+    status: "Status",
+
+    updated: "Zaktualizowano",
+    statusUpdated: "Status transakcji został zaktualizowany.",
+    updateFailed: "Błąd aktualizacji",
+    updateError: "Nie udało się zaktualizować transakcji.",
   },
+  chat: {
+    title: "Wiadomości",
+    subtitle: "Rozmawiaj z kupującymi i sprzedawcami o ogłoszeniach.",
+    loadingInbox: "Ładowanie wiadomości...",
+    loadFailed: "Nie udało się załadować rozmów.",
+    noConversations: "Brak rozmów",
+    noConversationsDescription:
+      "Zacznij od wysłania wiadomości do sprzedawcy na stronie produktu.",
+    noMessagesYet: "Brak wiadomości",
+    messagesLoadFailed: "Nie udało się załadować wiadomości.",
+    sendFailed: "Błąd wysyłania",
+    couldNotSendMessage: "Nie udało się wysłać wiadomości.",
+    loadingMessages: "Ładowanie wiadomości...",
+    noMessagesDescription: "Brak wiadomości. Rozpocznij rozmowę.",
+    attachment: "Załącznik",
+    typeMessage: "Wpisz wiadomość...",
+    sending: "Wysyłanie...",
+    send: "Wyślij",
+    selected: "Wybrano",
+  },
+  auth: {
+    welcomeBack: "Witamy ponownie",
+    loginSubtitle:
+      "Zaloguj się, aby zarządzać ogłoszeniami, wiadomościami, płatnościami i transakcjami.",
+    email: "E-mail",
+    enterEmail: "Wpisz swój e-mail",
+    password: "Hasło",
+    enterPassword: "Wpisz swoje hasło",
+    loggingIn: "Logowanie...",
+    loginFailed: "Logowanie nie powiodło się. Spróbuj ponownie.",
+    noAccount: "Nie masz konta?",
+    createOne: "Utwórz konto",
+    createAccount: "Utwórz konto",
+    registerSubtitle:
+      "Zacznij kupować i sprzedawać używane produkty na GreenMarket.",
+
+    fullName: "Imię i nazwisko",
+    enterFullName: "Wpisz swoje imię i nazwisko",
+
+    createPassword: "Utwórz hasło",
+    confirmPassword: "Potwierdź hasło",
+    repeatPassword: "Powtórz hasło",
+
+    passwordMismatch: "Hasła nie są zgodne.",
+    registerFailed: "Rejestracja nie powiodła się. Spróbuj ponownie.",
+
+    creating: "Tworzenie...",
+
+    haveAccount: "Masz już konto?",
+  },
+  home: {
+    badge: "Ekologiczny marketplace z używanymi produktami",
+
+    heroTitle: "Kupuj i sprzedawaj używane produkty w nowoczesny sposób.",
+    heroText:
+      "GreenMarket to platforma marketplace stworzona w ramach pracy dyplomowej, gdzie użytkownicy mogą dodawać ogłoszenia, rozmawiać ze sprzedawcami, śledzić transakcje, zarządzać płatnościami i odkrywać sprawdzone produkty.",
+
+    exploreProducts: "Przeglądaj produkty",
+    createListing: "Dodaj ogłoszenie",
+
+    fastListing: "Szybkie dodawanie",
+    fastListingText: "Dodawaj produkty i zdjęcia w prosty sposób.",
+
+    transactionTracking: "Śledzenie transakcji",
+    transactionTrackingText:
+      "Monitoruj status zamówienia od oczekującego do zakończonego.",
+
+    coreFeatures: "Główne funkcje",
+    coreFeaturesText:
+      "Platforma zawiera najważniejsze funkcje marketplace: ogłoszenia, przesyłanie zdjęć, czat kupujący-sprzedawca, ulubione, transakcje, płatności, opinie, zgłoszenia, kupony, historia zamówień, profil sprzedawcy i panel administratora.",
+
+    featureProducts: "Ogłoszenia produktów",
+    featureProductsText:
+      "Twórz, edytuj, filtruj i zarządzaj ogłoszeniami z ceną, stanem, lokalizacją i zdjęciami.",
+
+    featureChat: "Czat kupujący–sprzedawca",
+    featureChatText:
+      "Kupujący mogą kontaktować się ze sprzedawcami, wysyłać wiadomości i załączniki.",
+
+    featurePayments: "Płatności i kupony",
+    featurePaymentsText:
+      "Twórz transakcje, realizuj płatności demo, sprawdzaj kupony i historię płatności.",
+
+    featureWishlist: "Ulubione",
+    featureWishlistText:
+      "Zapisuj interesujące produkty i wracaj do nich później.",
+
+    featureReviews: "Opinie i oceny",
+    featureReviewsText:
+      "Po zakończeniu transakcji użytkownicy mogą ocenić sprzedawcę.",
+
+    featureAdmin: "Panel administratora",
+    featureAdminText:
+      "Administrator zarządza produktami, użytkownikami, transakcjami, płatnościami i raportami.",
+
+    activeListings: "Aktywne ogłoszenia",
+    safeTransactions: "Bezpieczne transakcje",
+    adminSupport: "Wsparcie administracji",
+
+    featuredDeal: "Polecana oferta",
+    previewLocation: "Rzeszów, Polska",
+    condition: "Stan",
+    sellerRating: "Ocena sprzedawcy",
+    chatPreview: "Cześć, czy to nadal dostępne?",
+    chatReply: "Tak, możesz odebrać dzisiaj.",
+
+    marketplaceTools: "Narzędzia marketplace",
+
+    howItWorks: "Jak to działa",
+    simpleFlow: "Prosty proces od ogłoszenia do zakończenia zamówienia",
+    simpleFlowText:
+      "Platforma obsługuje pełną ścieżkę użytkownika: publikację ogłoszenia, czat, utworzenie transakcji, płatność, zakończenie zamówienia i wystawienie opinii.",
+
+    stepList: "Dodaj produkt",
+    stepListText: "Prześlij zdjęcia i szczegóły produktu.",
+
+    stepChat: "Rozmawiaj i potwierdź",
+    stepChatText: "Kupujący i sprzedawca omawiają produkt.",
+
+    stepPay: "Zapłać i zakończ",
+    stepPayText: "Śledź status płatności i transakcji.",
+
+    ctaTitle: "Gotowy na okazje z drugiej ręki?",
+    ctaText:
+      "Przeglądaj dostępne produkty lub dodaj swoje pierwsze ogłoszenie już dziś.",
+  },
+  footer: {
+    description:
+      "Nowoczesna platforma marketplace do bezpiecznego kupowania i sprzedaży produktów używanych.",
+
+    navigation: "Nawigacja",
+    features: "Funkcje",
+    tech: "Technologia",
+
+    chat: "Czat",
+    payments: "System płatności",
+    reviews: "Opinie i oceny",
+    admin: "Panel administratora",
+
+    builtFor: "Projekt pracy dyplomowej",
+  },
+
   notFound: {
     description: "Strona, której szukasz, nie istnieje.",
     backHome: "Powrót do strony głównej",
@@ -215,6 +549,16 @@ const pl = {
     amount: "Kwota",
     paidAt: "Zapłacono",
     notPaidYet: "Jeszcze nie zapłacono",
+    adminTitle: "Płatności administratora",
+    adminSubtitle: "Zarządzaj rekordami płatności w systemie.",
+    statusFilter: "Filtr statusu",
+    updated: "Zaktualizowano",
+    statusUpdated: "Status płatności został zaktualizowany.",
+    updateFailed: "Błąd aktualizacji",
+    updateError: "Nie udało się zaktualizować płatności.",
+    noPaymentsAdmin: "Brak płatności",
+    noPaymentsAdminDesc: "Brak rekordów płatności.",
+    reference: "Numer referencyjny",
   },
 
   paymentMethod: {

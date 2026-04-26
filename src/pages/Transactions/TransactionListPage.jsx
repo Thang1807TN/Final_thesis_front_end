@@ -18,6 +18,7 @@ function TransactionListPage() {
 
   const loadTransactions = async () => {
     try {
+      setLoading(true);
       const response = await transactionApi.getMine();
       setTransactions(response.data || []);
     } catch (error) {
@@ -47,6 +48,8 @@ function TransactionListPage() {
         t("transactions.completed", "Completed"),
         t("transactions.markedCompleted", "Transaction marked as completed."),
       );
+
+      await loadTransactions();
     } catch (error) {
       toast.error(
         t("transactions.completeFailed", "Complete failed"),
@@ -61,16 +64,20 @@ function TransactionListPage() {
       <MainLayout>
         <section className="page-shell">
           <div className="container">
-            <h1 className="page-title">
-              {t("transactions.title", "Transactions")}
-            </h1>
+            <div className="page-title-row">
+              <div>
+                <h1 className="page-title">
+                  {t("transactions.title", "Transactions")}
+                </h1>
 
-            <p className="page-subtitle">
-              {t(
-                "transactions.subtitle",
-                "Monitor your current transaction records and statuses.",
-              )}
-            </p>
+                <p className="page-subtitle">
+                  {t(
+                    "transactions.subtitle",
+                    "Monitor your current transaction records and statuses.",
+                  )}
+                </p>
+              </div>
+            </div>
 
             {loading ? (
               <Loader

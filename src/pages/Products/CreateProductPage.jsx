@@ -56,15 +56,17 @@ function CreateProductPage() {
               <div className="create-product-steps">
                 <div>
                   <strong>01</strong>
-                  <span>Product details</span>
+                  <span>{t("products.stepDetails", "Product details")}</span>
                 </div>
+
                 <div>
                   <strong>02</strong>
-                  <span>Images</span>
+                  <span>{t("products.stepImages", "Images")}</span>
                 </div>
+
                 <div>
                   <strong>03</strong>
-                  <span>Publish</span>
+                  <span>{t("products.stepPublish", "Publish")}</span>
                 </div>
               </div>
             </div>

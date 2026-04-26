@@ -1,17 +1,77 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { formatCurrency } from "../../utils/formatCurrency";
 import TransactionStatusBadge from "./TransactionStatusBadge";
 
 function TransactionCard({ transaction, onCompleted }) {
+  const { t } = useTranslation();
+
+  const status = String(transaction.status || "");
+  const paymentStatus = String(transaction.paymentStatus || "");
+
+  const isPaid =
+    transaction.isPaid === true ||
+    paymentStatus === "Paid" ||
+    Number(transaction.paymentStatus) === 2;
+
+  const canPay =
+    !isPaid &&
+    status !== "Completed" &&
+    status !== "Cancelled" &&
+    status !== "Refunded";
+
+  const canComplete = status === "Paid" && isPaid;
+
+  const originalAmount = Number(
+    transaction.totalAmount ?? transaction.amount ?? 0,
+  );
+
+  const finalAmount = Number(
+    transaction.paidAmount ?? transaction.finalAmount ?? originalAmount,
+  );
+
+  const discountAmount = Number(
+    transaction.discountAmount ?? Math.max(0, originalAmount - finalAmount),
+  );
+
+  const discountPercent =
+    transaction.discountPercent ||
+    (originalAmount > 0 && discountAmount > 0
+      ? Math.round((discountAmount / originalAmount) * 100)
+      : 0);
+
   return (
     <div className="card transaction-card">
       <div className="transaction-card-top">
         <div>
-          <h3>{transaction.productTitle}</h3>
-          <p className="muted">Seller: {transaction.sellerName}</p>
-          <p className="muted">Buyer: {transaction.buyerName}</p>
-          {transaction.paymentStatus && (
-            <p className="muted">Payment: {transaction.paymentStatus}</p>
+          <div className="transaction-card-title-row">
+            <h3>{transaction.productTitle}</h3>
+
+            {discountAmount > 0 && (
+              <span className="transaction-discount-badge">
+                -{discountPercent}%
+              </span>
+            )}
+          </div>
+
+          <p className="muted">
+            {t("transactions.seller", "Seller")}: {transaction.sellerName}
+          </p>
+
+          <p className="muted">
+            {t("transactions.buyer", "Buyer")}: {transaction.buyerName}
+          </p>
+
+          <p className="muted">
+            {t("transactions.paymentStatus", "Payment")}:{" "}
+            {paymentStatus || t("status.pending", "Pending")}
+          </p>
+
+          {transaction.appliedCouponCode && (
+            <p className="muted">
+              {t("coupon.code", "Coupon")}:{" "}
+              <strong>{transaction.appliedCouponCode}</strong>
+            </p>
           )}
         </div>
 
@@ -19,18 +79,30 @@ function TransactionCard({ transaction, onCompleted }) {
       </div>
 
       <div className="transaction-card-bottom">
-        <strong>
-          {formatCurrency(transaction.totalAmount || transaction.amount)}
-        </strong>
+        <div className="transaction-price-block">
+          {discountAmount > 0 && (
+            <span className="transaction-old-price">
+              {formatCurrency(originalAmount)}
+            </span>
+          )}
 
-        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-          {!transaction.isPaid && (
+          <strong>{formatCurrency(finalAmount)}</strong>
+
+          {discountAmount > 0 && (
+            <span className="transaction-discount-mini">
+              -{formatCurrency(discountAmount)}
+            </span>
+          )}
+        </div>
+
+        <div className="transaction-actions">
+          {canPay && (
             <Link
               to="/payments"
               state={{ transaction }}
-              className="btn btn-outline"
+              className="btn btn-primary"
             >
-              Pay Now
+              {t("transactions.payNow", "Pay Now")}
             </Link>
           )}
 
@@ -38,15 +110,16 @@ function TransactionCard({ transaction, onCompleted }) {
             to={`/transactions/${transaction.id}`}
             className="btn btn-outline"
           >
-            View Details
+            {t("transactions.viewDetails", "View Details")}
           </Link>
 
-          {transaction.status === "Paid" && (
+          {canComplete && (
             <button
+              type="button"
               className="btn btn-outline"
               onClick={() => onCompleted?.(transaction.id)}
             >
-              Mark Completed
+              {t("transactions.markCompleted", "Mark Completed")}
             </button>
           )}
         </div>

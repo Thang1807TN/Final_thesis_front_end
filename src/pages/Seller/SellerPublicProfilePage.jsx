@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import sellerDashboardApi from "../../api/sellerDashboardApi";
 import productApi from "../../api/productApi";
@@ -7,9 +8,12 @@ import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 import ProductGrid from "../../components/product/ProductGrid";
 import SellerReviewList from "../../components/review/SellerReviewList";
+import { formatDate } from "../../utils/formatDate";
 
 function SellerPublicProfilePage() {
+  const { t } = useTranslation();
   const { sellerId } = useParams();
+
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +41,13 @@ function SellerPublicProfilePage() {
   if (loading) {
     return (
       <MainLayout>
-        <Loader text="Loading seller profile..." />
+        <section className="page-shell">
+          <div className="container">
+            <Loader
+              text={t("seller.loadingProfile", "Loading seller profile...")}
+            />
+          </div>
+        </section>
       </MainLayout>
     );
   }
@@ -48,8 +58,11 @@ function SellerPublicProfilePage() {
         <section className="page-shell">
           <div className="container">
             <EmptyState
-              title="Seller not found"
-              description="The requested seller profile could not be loaded."
+              title={t("seller.notFound", "Seller not found")}
+              description={t(
+                "seller.notFoundDescription",
+                "The requested seller profile could not be loaded.",
+              )}
             />
           </div>
         </section>
@@ -59,59 +72,105 @@ function SellerPublicProfilePage() {
 
   return (
     <MainLayout>
-      <section className="page-shell">
+      <section className="page-shell seller-public-page">
         <div className="container">
-          <div className="card seller-public-profile-card">
-            <div className="page-title-row">
-              <div>
-                <h1 className="page-title">{profile.fullName}</h1>
-                <p className="page-subtitle">
-                  Joined on {new Date(profile.joinedAt).toLocaleDateString()}
-                </p>
-              </div>
-
-              {profile.isVerifiedSeller && (
-                <span className="badge">Verified Seller</span>
-              )}
+          <div className="card seller-public-hero">
+            <div className="seller-public-avatar">
+              {(profile.fullName || "S").charAt(0).toUpperCase()}
             </div>
 
-            <div className="dashboard-stats-grid">
-              <div className="card dashboard-stat-card">
-                <span>Total Listings</span>
-                <strong>{profile.totalListings}</strong>
+            <div className="seller-public-main">
+              <div className="seller-public-title-row">
+                <div>
+                  <span className="seller-public-badge">
+                    {t("seller.publicProfile", "Seller Public Profile")}
+                  </span>
+
+                  <h1 className="page-title">{profile.fullName}</h1>
+
+                  <p className="page-subtitle">
+                    {t("seller.joinedOn", "Joined on")}{" "}
+                    {formatDate(profile.joinedAt)}
+                  </p>
+                </div>
+
+                {profile.isVerifiedSeller && (
+                  <span className="seller-verified-badge">
+                    ✓ {t("seller.verifiedSeller", "Verified Seller")}
+                  </span>
+                )}
               </div>
-              <div className="card dashboard-stat-card">
-                <span>Available Listings</span>
-                <strong>{profile.availableListings}</strong>
-              </div>
-              <div className="card dashboard-stat-card">
-                <span>Sold Listings</span>
-                <strong>{profile.soldListings}</strong>
-              </div>
-              <div className="card dashboard-stat-card">
-                <span>Average Rating</span>
-                <strong>{profile.averageRating}</strong>
-              </div>
-              <div className="card dashboard-stat-card">
-                <span>Total Reviews</span>
-                <strong>{profile.totalReviews}</strong>
+
+              <div className="seller-public-stats">
+                <div className="card seller-public-stat-card">
+                  <span>{t("seller.totalListings", "Total Listings")}</span>
+                  <strong>{profile.totalListings}</strong>
+                </div>
+
+                <div className="card seller-public-stat-card">
+                  <span>
+                    {t("seller.availableListings", "Available Listings")}
+                  </span>
+                  <strong>{profile.availableListings}</strong>
+                </div>
+
+                <div className="card seller-public-stat-card">
+                  <span>{t("seller.soldListings", "Sold Listings")}</span>
+                  <strong>{profile.soldListings}</strong>
+                </div>
+
+                <div className="card seller-public-stat-card rating">
+                  <span>{t("seller.averageRating", "Average Rating")}</span>
+                  <strong>{profile.averageRating || 0} / 5</strong>
+                </div>
+
+                <div className="card seller-public-stat-card">
+                  <span>{t("seller.totalReviews", "Total Reviews")}</span>
+                  <strong>{profile.totalReviews}</strong>
+                </div>
               </div>
             </div>
           </div>
 
-          <div style={{ marginTop: "24px" }}>
-            <h2 className="page-title">Public Listings</h2>
+          <div className="seller-public-section">
+            <div className="seller-public-section-header">
+              <div>
+                <h2>{t("seller.publicListings", "Public Listings")}</h2>
+                <p>
+                  {t(
+                    "seller.publicListingsSubtitle",
+                    "Products currently visible from this seller.",
+                  )}
+                </p>
+              </div>
+            </div>
+
             {products.length === 0 ? (
               <EmptyState
-                title="No public listings"
-                description="This seller has no public listings at the moment."
+                title={t("seller.noPublicListings", "No public listings")}
+                description={t(
+                  "seller.noPublicListingsDescription",
+                  "This seller has no public listings at the moment.",
+                )}
               />
             ) : (
               <ProductGrid products={products} />
             )}
           </div>
 
-          <div style={{ marginTop: "24px" }}>
+          <div className="seller-public-section">
+            <div className="seller-public-section-header">
+              <div>
+                <h2>{t("seller.reviews", "Seller Reviews")}</h2>
+                <p>
+                  {t(
+                    "seller.reviewsSubtitle",
+                    "Feedback from buyers after completed transactions.",
+                  )}
+                </p>
+              </div>
+            </div>
+
             <SellerReviewList sellerId={sellerId} />
           </div>
         </div>

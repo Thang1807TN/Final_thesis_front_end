@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import userApi from "../../api/userApi";
@@ -7,7 +8,9 @@ import ProfileCard from "../../components/user/ProfileCard";
 import useToast from "../../hooks/useToast";
 
 function ProfilePage() {
+  const { t } = useTranslation();
   const toast = useToast();
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -27,7 +30,10 @@ function ProfilePage() {
           email: response.data.email || "",
         });
       } catch (error) {
-        toast.error("Load failed", "Could not load profile.");
+        toast.error(
+          t("profile.loadFailed", "Load failed"),
+          t("profile.loadError", "Could not load profile."),
+        );
       } finally {
         setLoading(false);
       }
@@ -50,14 +56,20 @@ function ProfilePage() {
 
     try {
       setSaving(true);
+
       const response = await userApi.updateProfile(form);
       setProfile(response.data);
       localStorage.setItem("user", JSON.stringify(response.data));
-      toast.success("Saved", "Profile updated successfully.");
+
+      toast.success(
+        t("profile.saved", "Saved"),
+        t("profile.savedSuccess", "Profile updated successfully."),
+      );
     } catch (error) {
       toast.error(
-        "Update failed",
-        error.response?.data?.message || "Could not update profile.",
+        t("profile.updateFailed", "Update failed"),
+        error.response?.data?.message ||
+          t("profile.updateError", "Could not update profile."),
       );
     } finally {
       setSaving(false);
@@ -70,20 +82,25 @@ function ProfilePage() {
         <section className="page-shell">
           <div className="container">
             {loading ? (
-              <Loader text="Loading profile..." />
+              <Loader text={t("profile.loading", "Loading profile...")} />
             ) : (
               <div className="profile-page-grid">
                 <ProfileCard user={profile} />
 
                 <div className="card profile-form-card">
-                  <h1 className="page-title">My Profile</h1>
+                  <h1 className="page-title">
+                    {t("profile.title", "My Profile")}
+                  </h1>
+
                   <p className="page-subtitle">
-                    Update your account information.
+                    {t("profile.subtitle", "Update your account information.")}
                   </p>
 
                   <form className="profile-form" onSubmit={handleSubmit}>
                     <div className="input-group">
-                      <label className="input-label">Full Name</label>
+                      <label className="input-label">
+                        {t("profile.fullName", "Full Name")}
+                      </label>
                       <input
                         className="input-field"
                         name="fullName"
@@ -93,7 +110,9 @@ function ProfilePage() {
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">Email</label>
+                      <label className="input-label">
+                        {t("auth.email", "Email")}
+                      </label>
                       <input
                         className="input-field"
                         name="email"
@@ -108,7 +127,9 @@ function ProfilePage() {
                       type="submit"
                       disabled={saving}
                     >
-                      {saving ? "Saving..." : "Save Changes"}
+                      {saving
+                        ? t("profile.saving", "Saving...")
+                        : t("profile.saveChanges", "Save Changes")}
                     </button>
                   </form>
                 </div>

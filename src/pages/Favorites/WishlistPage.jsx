@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import MainLayout from "../../layouts/MainLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import favoriteApi from "../../api/favoriteApi";
@@ -7,6 +8,8 @@ import EmptyState from "../../components/common/EmptyState";
 import ProductGrid from "../../components/product/ProductGrid";
 
 function WishlistPage() {
+  const { t } = useTranslation();
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,15 +31,21 @@ function WishlistPage() {
       <MainLayout>
         <section className="page-shell">
           <div className="container">
-            <h1 className="page-title">Wishlist</h1>
-            <p className="page-subtitle">Products you saved for later.</p>
+            <h1 className="page-title">{t("wishlist.title", "Wishlist")}</h1>
+
+            <p className="page-subtitle">
+              {t("wishlist.subtitle", "Products you saved for later.")}
+            </p>
 
             {loading ? (
-              <Loader text="Loading wishlist..." />
+              <Loader text={t("wishlist.loading", "Loading wishlist...")} />
             ) : items.length === 0 ? (
               <EmptyState
-                title="No favorites yet"
-                description="Save products from product details to see them here."
+                title={t("wishlist.empty", "No favorites yet")}
+                description={t(
+                  "wishlist.emptyDesc",
+                  "Save products from product details to see them here.",
+                )}
               />
             ) : (
               <ProductGrid

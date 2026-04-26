@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/common/Input";
 import Button from "../../components/common/Button";
 import useAuth from "../../hooks/useAuth";
 
 function RegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { register } = useAuth();
 
@@ -16,6 +18,8 @@ function RegisterPage() {
     confirmPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -31,7 +35,7 @@ function RegisterPage() {
     setErrorMessage("");
 
     if (form.password !== form.confirmPassword) {
-      setErrorMessage("Passwords do not match.");
+      setErrorMessage(t("auth.passwordMismatch", "Passwords do not match."));
       return;
     }
 
@@ -48,7 +52,7 @@ function RegisterPage() {
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message ||
-          "Registration failed. Please try again.",
+          t("auth.registerFailed", "Registration failed. Please try again."),
       );
     } finally {
       setSubmitting(false);
@@ -57,63 +61,107 @@ function RegisterPage() {
 
   return (
     <AuthLayout>
-      <div className="auth-card">
-        <h1 className="auth-title">Create account</h1>
-        <p className="auth-subtitle">
-          Start selling and buying second-hand products on GreenMarket.
-        </p>
+      <div className="auth-page-card">
+        <div className="auth-card-header">
+          <span className="auth-badge">
+            {t("auth.createAccountBadge", "Create Account")}
+          </span>
 
-        <form onSubmit={handleSubmit}>
+          <h1 className="auth-title">
+            {t("auth.createAccount", "Create account")}
+          </h1>
+
+          <p className="auth-subtitle">
+            {t(
+              "auth.registerSubtitle",
+              "Start selling and buying second-hand products on GreenMarket.",
+            )}
+          </p>
+        </div>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
           <Input
-            label="Full name"
+            label={t("auth.fullName", "Full name")}
             name="fullName"
-            placeholder="Enter your full name"
+            placeholder={t("auth.enterFullName", "Enter your full name")}
             value={form.fullName}
             onChange={handleChange}
             required
           />
 
           <Input
-            label="Email"
+            label={t("auth.email", "Email")}
             name="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder={t("auth.enterEmail", "Enter your email")}
             value={form.email}
             onChange={handleChange}
             required
           />
 
-          <Input
-            label="Password"
-            name="password"
-            type="password"
-            placeholder="Create a password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <div className="password-field">
+            <label className="input-label">
+              {t("auth.password", "Password")}
+            </label>
 
-          <Input
-            label="Confirm password"
-            name="confirmPassword"
-            type="password"
-            placeholder="Repeat your password"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            required
-          />
+            <div className="password-input-wrap">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder={t("auth.createPassword", "Create a password")}
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
+          </div>
+
+          <div className="password-field">
+            <label className="input-label">
+              {t("auth.confirmPassword", "Confirm password")}
+            </label>
+
+            <div className="password-input-wrap">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder={t("auth.repeatPassword", "Repeat your password")}
+                value={form.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+              >
+                {showConfirmPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
+          </div>
 
           {errorMessage && <p className="form-error">{errorMessage}</p>}
 
-          <Button type="submit" fullWidth>
-            {submitting ? "Creating..." : "Register"}
+          <Button type="submit" fullWidth disabled={submitting}>
+            {submitting
+              ? t("auth.creating", "Creating...")
+              : t("common.register", "Register")}
           </Button>
         </form>
 
-        <p style={{ marginTop: "18px" }} className="muted">
-          Already have an account?{" "}
+        <p className="auth-switch-text">
+          {t("auth.haveAccount", "Already have an account?")}{" "}
           <Link className="link" to="/login">
-            Login
+            {t("common.login", "Login")}
           </Link>
         </p>
       </div>
