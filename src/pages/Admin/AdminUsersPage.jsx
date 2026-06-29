@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AdminLayout from "../../layouts/AdminLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
+import AdminUserTable from "../../components/admin/AdminUserTable";
 import userApi from "../../api/userApi";
 import Loader from "../../components/common/Loader";
 import EmptyState from "../../components/common/EmptyState";
 
 function AdminUsersPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,8 @@ function AdminUsersPage() {
       try {
         const response = await userApi.getAllUsers();
         setUsers(response.data || []);
+      } catch (error) {
+        console.error("Load users failed:", error);
       } finally {
         setLoading(false);
       }
@@ -45,32 +48,7 @@ function AdminUsersPage() {
                 )}
               />
             ) : (
-              <div className="admin-table">
-                <div className="admin-table-head admin-table-row admin-table-row-4">
-                  <div>{t("admin.fullName", "Full Name")}</div>
-                  <div>{t("auth.email", "Email")}</div>
-                  <div>{t("admin.role", "Role")}</div>
-                  <div>{t("admin.created", "Created")}</div>
-                </div>
-
-                {users.map((item) => (
-                  <div
-                    key={item.id}
-                    className="admin-table-row admin-table-row-4"
-                  >
-                    <div>{item.fullName}</div>
-                    <div>{item.email}</div>
-                    <div>{item.role}</div>
-                    <div>
-                      {item.createdAt
-                        ? new Date(item.createdAt).toLocaleDateString(
-                            i18n.language,
-                          )
-                        : "N/A"}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <AdminUserTable users={users} />
             )}
           </div>
         </section>

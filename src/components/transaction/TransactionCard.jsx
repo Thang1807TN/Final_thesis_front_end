@@ -6,6 +6,24 @@ import TransactionStatusBadge from "./TransactionStatusBadge";
 function TransactionCard({ transaction, onCompleted }) {
   const { t } = useTranslation();
 
+  const translateStatus = (value) => {
+    const normalized = String(value || "")
+      .trim()
+      .toLowerCase();
+
+    const map = {
+      pending: t("status.pending", "Pending"),
+      confirmed: t("status.confirmed", "Confirmed"),
+      paid: t("status.paid", "Paid"),
+      completed: t("status.completed", "Completed"),
+      cancelled: t("status.cancelled", "Cancelled"),
+      failed: t("status.failed", "Failed"),
+      refunded: t("status.refunded", "Refunded"),
+    };
+
+    return map[normalized] || value || "N/A";
+  };
+
   const status = String(transaction.status || "");
   const paymentStatus = String(transaction.paymentStatus || "");
 
@@ -64,7 +82,9 @@ function TransactionCard({ transaction, onCompleted }) {
 
           <p className="muted">
             {t("transactions.paymentStatus", "Payment")}:{" "}
-            {paymentStatus || t("status.pending", "Pending")}
+            {paymentStatus
+              ? translateStatus(paymentStatus)
+              : t("status.pending", "Pending")}
           </p>
 
           {transaction.appliedCouponCode && (

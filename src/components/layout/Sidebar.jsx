@@ -8,6 +8,7 @@ function Sidebar({ items = [] }) {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.end || item.to === "/admin"}
             className={({ isActive }) =>
               `dashboard-sidebar-link ${isActive ? "active" : ""}`
             }

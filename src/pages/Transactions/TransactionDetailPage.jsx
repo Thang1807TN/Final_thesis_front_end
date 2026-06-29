@@ -21,6 +21,24 @@ function TransactionDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
+  const translateStatus = (status) => {
+    const normalized = String(status || "")
+      .trim()
+      .toLowerCase();
+
+    const map = {
+      pending: t("status.pending", "Pending"),
+      confirmed: t("status.confirmed", "Confirmed"),
+      paid: t("status.paid", "Paid"),
+      completed: t("status.completed", "Completed"),
+      cancelled: t("status.cancelled", "Cancelled"),
+      failed: t("status.failed", "Failed"),
+      refunded: t("status.refunded", "Refunded"),
+    };
+
+    return map[normalized] || status || "N/A";
+  };
+
   useEffect(() => {
     const loadTransaction = async () => {
       try {
@@ -116,7 +134,7 @@ function TransactionDetailPage() {
                             transaction.status || "pending",
                           ).toLowerCase()}`}
                         >
-                          {transaction.status}
+                          {translateStatus(transaction.status)}
                         </span>
 
                         {paymentSummary.hasDiscount && (
@@ -171,7 +189,11 @@ function TransactionDetailPage() {
                         <span>
                           {t("transactions.paymentStatus", "Payment Status")}
                         </span>
-                        <strong>{transaction.paymentStatus || "N/A"}</strong>
+                        <strong>
+                          {transaction.paymentStatus
+                            ? translateStatus(transaction.paymentStatus)
+                            : "N/A"}
+                        </strong>
                       </div>
 
                       {paymentSummary.couponCode && (

@@ -9,6 +9,18 @@ function ProductFilter({
 }) {
   const { t } = useTranslation();
 
+  const translateCategory = (name) => {
+    const map = {
+      Books: t("categories.books", "Books"),
+      Clothing: t("categories.clothing", "Clothing"),
+      Electronics: t("categories.electronics", "Electronics"),
+      Furniture: t("categories.furniture", "Furniture"),
+      "Home Appliances": t("categories.homeAppliances", "Home Appliances"),
+    };
+
+    return map[name] || name;
+  };
+
   return (
     <div className="filter-panel card">
       <div className="filter-row">
@@ -28,7 +40,7 @@ function ProductFilter({
 
             {categories.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name}
+                {translateCategory(item.name)}
               </option>
             ))}
           </select>

@@ -1,10 +1,11 @@
-import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AdminLayout from "../../layouts/AdminLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import adminAnalyticsApi from "../../api/adminAnalyticsApi";
 import Loader from "../../components/common/Loader";
+import EmptyState from "../../components/common/EmptyState";
+import SummaryCard from "../../components/admin/SummaryCard";
 import AdminOverviewCharts from "../../components/admin/AdminOverviewCharts";
 
 function AdminDashboardPage() {
@@ -13,38 +14,66 @@ function AdminDashboardPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadAnalytics = async () => {
-      try {
-        const response = await adminAnalyticsApi.get();
-        setData(response.data);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadAnalytics = async () => {
+    try {
+      setLoading(true);
+      const response = await adminAnalyticsApi.get();
+      setData(response.data);
+    } catch (error) {
+      console.error("Load analytics failed:", error);
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadAnalytics();
   }, []);
 
-  const stats = useMemo(() => {
-    const users = data?.usersByMonth || [];
-    const listings = data?.listingsByCategory || [];
-    const transactions = data?.transactionsByStatus || [];
-    const reports = data?.reportsByStatus || [];
+  const normalizeChartItems = (items) => {
+    if (!Array.isArray(items)) return [];
 
+    return items.map((item) => ({
+      name: item.name || item.Name || "Unknown",
+      value: Number(item.value ?? item.Value ?? 0),
+    }));
+  };
+
+  const chartData = useMemo(() => {
     return {
-      users: users.reduce((sum, item) => sum + Number(item.value || 0), 0),
-      listings: listings.reduce(
-        (sum, item) => sum + Number(item.value || 0),
-        0,
+      usersByMonth: normalizeChartItems(
+        data?.usersByMonth || data?.UsersByMonth,
       ),
-      transactions: transactions.reduce(
-        (sum, item) => sum + Number(item.value || 0),
-        0,
+      listingsByCategory: normalizeChartItems(
+        data?.listingsByCategory || data?.ListingsByCategory,
       ),
-      reports: reports.reduce((sum, item) => sum + Number(item.value || 0), 0),
+      transactionsByStatus: normalizeChartItems(
+        data?.transactionsByStatus || data?.TransactionsByStatus,
+      ),
+      reportsByStatus: normalizeChartItems(
+        data?.reportsByStatus || data?.ReportsByStatus,
+      ),
     };
   }, [data]);
+
+  const stats = useMemo(() => {
+    const sumValues = (items) =>
+      items.reduce((sum, item) => sum + Number(item.value || 0), 0);
+
+    return {
+      users: sumValues(chartData.usersByMonth),
+      listings: sumValues(chartData.listingsByCategory),
+      transactions: sumValues(chartData.transactionsByStatus),
+      reports: sumValues(chartData.reportsByStatus),
+    };
+  }, [chartData]);
+
+  const hasData =
+    stats.users > 0 ||
+    stats.listings > 0 ||
+    stats.transactions > 0 ||
+    stats.reports > 0;
 
   return (
     <ProtectedRoute adminOnly>
@@ -64,65 +93,61 @@ function AdminDashboardPage() {
                 <p className="page-subtitle">
                   {t(
                     "admin.dashboardSubtitle",
-                    "Overview of users, listings, transactions, reports, and revenue.",
+                    "Overview of users, listings, transactions, reports, and system activity.",
                   )}
                 </p>
               </div>
 
-              <div className="admin-dashboard-actions">
-                <Link className="btn btn-outline" to="/admin/products">
-                  {t("common.products", "Products")}
-                </Link>
-
-                <Link className="btn btn-outline" to="/admin/users">
-                  {t("admin.users", "Users")}
-                </Link>
-
-                <Link className="btn btn-outline" to="/admin/transactions">
-                  {t("common.transactions", "Transactions")}
-                </Link>
-
-                <Link className="btn btn-outline" to="/admin/payments">
-                  {t("common.payments", "Payments")}
-                </Link>
-              </div>
+              <button className="btn btn-outline" onClick={loadAnalytics}>
+                {t("common.refresh", "Refresh")}
+              </button>
             </div>
 
             {loading ? (
               <Loader
                 text={t("admin.loadingAnalytics", "Loading analytics...")}
               />
+            ) : !hasData ? (
+              <EmptyState
+                title={t("admin.noAnalytics", "No analytics data")}
+                description={t(
+                  "admin.noAnalyticsDesc",
+                  "There is no dashboard data available yet.",
+                )}
+              />
             ) : (
               <>
-                <div className="admin-dashboard-stats">
-                  <div className="card admin-dashboard-stat-card">
-                    <span>Total Users</span>
-                    <strong>{stats.users}</strong>
-                    <p>Registered accounts</p>
-                  </div>
+                <div className="admin-summary-grid">
+                  <SummaryCard
+                    title={t("admin.totalUsers", "Total Users")}
+                    value={stats.users}
+                    note={t("admin.totalUsersNote", "Registered accounts")}
+                    icon="👤"
+                  />
 
-                  <div className="card admin-dashboard-stat-card">
-                    <span>Listings</span>
-                    <strong>{stats.listings}</strong>
-                    <p>Products by category</p>
-                  </div>
+                  <SummaryCard
+                    title={t("admin.listings", "Listings")}
+                    value={stats.listings}
+                    note={t("admin.listingsNote", "Products by category")}
+                    icon="📦"
+                  />
 
-                  <div className="card admin-dashboard-stat-card">
-                    <span>Transactions</span>
-                    <strong>{stats.transactions}</strong>
-                    <p>Marketplace orders</p>
-                  </div>
+                  <SummaryCard
+                    title={t("admin.transactions", "Transactions")}
+                    value={stats.transactions}
+                    note={t("admin.transactionsNote", "Marketplace orders")}
+                    icon="💳"
+                  />
 
-                  <div className="card admin-dashboard-stat-card">
-                    <span>Reports</span>
-                    <strong>{stats.reports}</strong>
-                    <p>User/product reports</p>
-                  </div>
+                  <SummaryCard
+                    title={t("admin.reports", "Reports")}
+                    value={stats.reports}
+                    note={t("admin.reportsNote", "User and product reports")}
+                    icon="⚠️"
+                  />
                 </div>
 
-                <div className="admin-dashboard-chart-card card">
-                  <AdminOverviewCharts data={data} />
-                </div>
+                <AdminOverviewCharts data={chartData} />
               </>
             )}
           </div>

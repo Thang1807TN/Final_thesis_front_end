@@ -9,34 +9,6 @@ import useToast from "../../hooks/useToast";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { formatDate } from "../../utils/formatDate";
 
-const getPaymentStatusText = (status) => {
-  const map = {
-    1: "Pending",
-    2: "Paid",
-    3: "Failed",
-    4: "Refunded",
-    Pending: "Pending",
-    Paid: "Paid",
-    Failed: "Failed",
-    Refunded: "Refunded",
-  };
-
-  return map[status] || "Pending";
-};
-
-const getPaymentMethodText = (method) => {
-  const map = {
-    1: "Cash On Delivery",
-    2: "Bank Transfer",
-    3: "Online Demo",
-    CashOnDelivery: "Cash On Delivery",
-    BankTransfer: "Bank Transfer",
-    OnlineDemo: "Online Demo",
-  };
-
-  return map[method] || method || "N/A";
-};
-
 function PaymentHistoryPage() {
   const { t } = useTranslation();
   const toast = useToast();
@@ -44,12 +16,55 @@ function PaymentHistoryPage() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const getPaymentStatusText = (status) => {
+    const map = {
+      1: t("status.pending", "Pending"),
+      2: t("status.paid", "Paid"),
+      3: t("status.failed", "Failed"),
+      4: t("status.refunded", "Refunded"),
+      Pending: t("status.pending", "Pending"),
+      Paid: t("status.paid", "Paid"),
+      Failed: t("status.failed", "Failed"),
+      Refunded: t("status.refunded", "Refunded"),
+    };
+
+    return map[status] || t("status.pending", "Pending");
+  };
+
+  const getPaymentStatusClass = (status) => {
+    const map = {
+      1: "pending",
+      2: "paid",
+      3: "failed",
+      4: "refunded",
+      Pending: "pending",
+      Paid: "paid",
+      Failed: "failed",
+      Refunded: "refunded",
+    };
+
+    return map[status] || "pending";
+  };
+
+  const getPaymentMethodText = (method) => {
+    const map = {
+      1: t("paymentMethod.cashOnDelivery", "Cash On Delivery"),
+      2: t("paymentMethod.bankTransfer", "Bank Transfer"),
+      3: t("paymentMethod.onlineDemo", "Online Demo"),
+      CashOnDelivery: t("paymentMethod.cashOnDelivery", "Cash On Delivery"),
+      BankTransfer: t("paymentMethod.bankTransfer", "Bank Transfer"),
+      OnlineDemo: t("paymentMethod.onlineDemo", "Online Demo"),
+    };
+
+    return map[method] || method || "N/A";
+  };
+
   useEffect(() => {
     const loadPayments = async () => {
       try {
         const response = await paymentApi.getMine();
         setPayments(response.data || []);
-      } catch (error) {
+      } catch {
         toast.error(
           t("toast.loadFailed", "Load failed"),
           t("payment.historyLoadFailed", "Could not load payment history."),
@@ -69,14 +84,19 @@ function PaymentHistoryPage() {
           <div className="container">
             <div className="payment-history-hero card">
               <div>
-                <span className="payment-history-badge">Payment Center</span>
+                <span className="payment-history-badge">
+                  {t("payment.center", "Payment Center")}
+                </span>
 
                 <h1 className="page-title">
                   {t("payment.historyTitle", "Payment History")}
                 </h1>
 
                 <p className="page-subtitle">
-                  Review your payment records, methods, and payment statuses.
+                  {t(
+                    "payment.historySubtitle",
+                    "Review your payment records, methods, and payment statuses.",
+                  )}
                 </p>
               </div>
             </div>
@@ -99,14 +119,16 @@ function PaymentHistoryPage() {
                   const statusText = getPaymentStatusText(
                     payment.paymentStatus,
                   );
-                  const statusKey = statusText.toLowerCase();
+                  const statusClass = getPaymentStatusClass(
+                    payment.paymentStatus,
+                  );
 
                   return (
                     <div key={payment.id} className="card payment-history-card">
                       <div className="payment-history-top">
                         <div>
                           <span
-                            className={`payment-status-badge payment-status-${statusKey}`}
+                            className={`payment-status-badge payment-status-${statusClass}`}
                           >
                             {statusText}
                           </span>

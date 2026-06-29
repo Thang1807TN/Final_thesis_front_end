@@ -489,7 +489,28 @@ const pl = {
 
     builtFor: "Projekt pracy dyplomowej",
   },
+  timeline: {
+    transactionCreated: "Utworzono transakcję",
+    paymentCreated: "Utworzono płatność",
+    orderCompleted: "Zamówienie zakończone",
+    transactionUpdated: "Zaktualizowano transakcję",
 
+    transactionStatusUpdated: "Zaktualizowano status transakcji",
+    paymentUpdated: "Zaktualizowano płatność",
+    paymentConfirmed: "Płatność potwierdzona",
+
+    transactionCreatedFor: 'Utworzono transakcję dla produktu "{{product}}".',
+    paymentCreatedDescription: "Metoda: {{method}}, Status: {{status}}",
+    statusChangedTo: "Status zmieniony na {{status}}",
+
+    transactionStatusChanged: "Status transakcji zmieniono na {{status}}.",
+    paymentUpdatedDescription:
+      "Status: {{paymentStatus}}. Status transakcji: {{transactionStatus}}.",
+    paymentConfirmedDescription:
+      "Metoda płatności: {{method}}. Status: {{status}}.",
+
+    transactionMarkedCompleted: "Transakcja została oznaczona jako zakończona",
+  },
   notFound: {
     description: "Strona, której szukasz, nie istnieje.",
     backHome: "Powrót do strony głównej",
@@ -503,6 +524,8 @@ const pl = {
     continueToPayment: "Przejdź do płatności",
   },
   payment: {
+    center: "Centrum płatności",
+    historySubtitle: "Przeglądaj swoje płatności, metody i statusy płatności.",
     title: "Płatność",
     subtitle: "Potwierdź i zakończ płatność za tę transakcję.",
     secureCheckout: "Bezpieczna płatność",
@@ -565,6 +588,13 @@ const pl = {
     cashOnDelivery: "Płatność przy odbiorze",
     bankTransfer: "Przelew bankowy",
     onlineDemo: "Demo online",
+  },
+  categories: {
+    books: "Książki",
+    clothing: "Odzież",
+    electronics: "Elektronika",
+    furniture: "Meble",
+    homeAppliances: "AGD",
   },
 };
 

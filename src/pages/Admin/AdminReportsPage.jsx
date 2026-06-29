@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import MainLayout from "../../layouts/MainLayout";
+import AdminLayout from "../../layouts/AdminLayout";
 import ProtectedRoute from "../../components/user/ProtectedRoute";
 import reportApi from "../../api/reportApi";
 import Loader from "../../components/common/Loader";
@@ -36,6 +36,7 @@ function AdminReportsPage() {
 
   useEffect(() => {
     loadReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getStatusLabel = (status) => {
@@ -94,6 +95,7 @@ function AdminReportsPage() {
         t("reports.statusUpdated", "Report status updated successfully."),
       );
     } catch (error) {
+      console.error(error);
       toast.error(
         t("reports.updateFailed", "Update failed"),
         error.response?.data?.message ||
@@ -106,7 +108,7 @@ function AdminReportsPage() {
 
   return (
     <ProtectedRoute adminOnly>
-      <MainLayout>
+      <AdminLayout>
         <section className="page-shell admin-reports-page">
           <div className="container">
             <div className="admin-reports-hero card">
@@ -163,6 +165,7 @@ function AdminReportsPage() {
                     <label className="input-label">
                       {t("reports.search", "Search reports")}
                     </label>
+
                     <input
                       className="input-field"
                       value={searchTerm}
@@ -178,12 +181,14 @@ function AdminReportsPage() {
                     <label className="input-label">
                       {t("reports.filterStatus", "Filter status")}
                     </label>
+
                     <select
                       className="input-field"
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
                     >
                       <option value="All">{t("common.all", "All")}</option>
+
                       {statusOptions.map((status) => (
                         <option key={status} value={status}>
                           {getStatusLabel(status)}
@@ -293,7 +298,7 @@ function AdminReportsPage() {
             )}
           </div>
         </section>
-      </MainLayout>
+      </AdminLayout>
     </ProtectedRoute>
   );
 }

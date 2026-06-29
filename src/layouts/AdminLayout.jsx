@@ -16,7 +16,6 @@ function AdminLayout({ children }) {
     },
     { to: "/admin/payments", label: t("common.payments", "Payments") },
 
-    // 👉 QUAN TRỌNG: thêm dòng này
     { to: "/admin/coupons", label: t("coupon.title", "Coupons") },
 
     { to: "/admin/reports", label: t("admin.reports", "Reports") },

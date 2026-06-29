@@ -408,6 +408,16 @@ const en = {
     fair: "Fair",
   },
 
+  timeline: {
+    transactionCreated: "Transaction created",
+    paymentCreated: "Payment created",
+    orderCompleted: "Order completed",
+    transactionUpdated: "Transaction updated",
+    transactionCreatedFor: 'Transaction created for "{{product}}".',
+    paymentCreatedDescription: "Method: {{method}}, Status: {{status}}",
+    statusChangedTo: "Status changed to {{status}}",
+    transactionMarkedCompleted: "Transaction marked as completed",
+  },
   transactions: {
     title: "Transactions",
     subtitle: "Monitor your current transaction records and statuses.",
@@ -484,6 +494,7 @@ const en = {
     updateFailed: "Update failed",
     updateError: "Could not update transaction.",
   },
+
   notFound: {
     description: "The page you are looking for does not exist.",
     backHome: "Back Home",
@@ -497,6 +508,9 @@ const en = {
     continueToPayment: "Continue to Payment",
   },
   payment: {
+    center: "Payment Center",
+    historySubtitle:
+      "Review your payment records, methods, and payment statuses.",
     title: "Payment",
     subtitle: "Confirm and complete your payment for this transaction.",
     secureCheckout: "Secure checkout",
@@ -560,6 +574,13 @@ const en = {
     cashOnDelivery: "Cash On Delivery",
     bankTransfer: "Bank Transfer",
     onlineDemo: "Online Demo",
+  },
+  categories: {
+    books: "Books",
+    clothing: "Clothing",
+    electronics: "Electronics",
+    furniture: "Furniture",
+    homeAppliances: "Home Appliances",
   },
 };
 

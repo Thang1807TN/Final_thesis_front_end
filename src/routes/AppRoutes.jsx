@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
+import UIComponentsShowcasePage from "../pages/UIShowcase/UIComponentsShowcasePage";
+
 import HomePage from "../pages/Home/HomePage";
 import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
@@ -37,6 +39,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+
+      <Route path="/ui-showcase" element={<UIComponentsShowcasePage />} />
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
